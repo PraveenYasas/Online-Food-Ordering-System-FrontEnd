@@ -1,4 +1,5 @@
 import { NavLink } from 'react-router-dom'
+import heroBackground from '../../assets/hero/Hero.jpg' // image_fbf3ab.png kalla
 
 export default function HeroSection() {
   return (
@@ -7,7 +8,7 @@ export default function HeroSection() {
       {/* Background Image - image_fbf3ab.png eke thiyana image eka reference karamu */}
       <div className="absolute inset-0 -z-10">
         <img 
-          src="/src/assets/hero-bg.png" 
+          src={heroBackground}
           alt="Food Background" 
           className="w-full h-full object-cover"
         />
