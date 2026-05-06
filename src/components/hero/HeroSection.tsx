@@ -1,30 +1,37 @@
 import { NavLink } from 'react-router-dom'
-import heroBackground from '../../assets/hero/Hero.jpg' // image_fbf3ab.png kalla
+// path එක සහ file name එකේ අකුරු වල හැඩය (Capital/Simple) හරියටම හරිද බලන්න
+import heroBg from '../../assets/hero/Hero.jpg' 
 
 export default function HeroSection() {
+  
+  const handleFakeLogin = () => {
+    localStorage.setItem("token", "fake-jwt-token-12345");
+    window.location.reload();
+  };
+
   return (
-    <section className="relative h-[550px] w-full flex items-center px-4 sm:px-12 overflow-hidden">
+    // Background color එකක් දුන්නා image එක load වෙනකන් හරි අවුලක් ගියොත් හරි පේන්න (bg-zinc-900)
+    <section className="relative h-[550px] w-full flex items-center px-4 sm:px-12 overflow-hidden bg-zinc-900">
       
-      {/* Background Image - image_fbf3ab.png eke thiyana image eka reference karamu */}
-      <div className="absolute inset-0 -z-10">
+      {/* මෙතනින් -z-10 අයින් කළා */}
+      <div className="absolute inset-0">
         <img 
-          src={heroBackground}
+          src={heroBg} 
           alt="Food Background" 
           className="w-full h-full object-cover"
         />
+        {/* ඕනෙ නම් image එකට පොඩි අඳුරු ගතියක් දෙන්න පුළුවන් අකුරු පැහැදිලිව පේන්න: className="... brightness-75" වගේ */}
       </div>
 
-      <div className="max-w-4xl w-full">
-        {/* Main Heading - image_fbf3ab.png kalla */}
-        <h1 className="text-[48px] md:text-[54px] font-bold leading-tight mb-8 tracking-tight text-black">
+      {/* මෙතනට 'relative z-10' දැම්මා, එතකොට content ටික image එකට උඩින් එනවා */}
+      <div className="relative z-10 max-w-4xl w-full">
+        <h1 className="text-[48px] md:text-[54px] font-bold leading-tight mb-8 tracking-tight text-white drop-shadow-lg">
           Order delivery near you
         </h1>
 
-        {/* Search & Deliver Box */}
         <div className="flex flex-col md:flex-row items-stretch gap-2">
-          
-          {/* Address Input Field */}
-          <div className="flex-1 flex items-center bg-white px-4 py-4 shadow-sm border border-transparent focus-within:border-black transition-all">
+          {/* Address Input */}
+          <div className="flex-1 flex items-center bg-white px-4 py-4 shadow-sm border border-transparent focus-within:border-black transition-all rounded-md md:rounded-none">
             <svg className="w-6 h-6 mr-3 text-black" fill="currentColor" viewBox="0 0 24 24">
               <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
             </svg>
@@ -35,8 +42,8 @@ export default function HeroSection() {
             />
           </div>
 
-          {/* Time Selector Dropdown */}
-          <div className="flex items-center bg-white px-4 py-4 min-w-[170px] shadow-sm border border-transparent focus-within:border-black cursor-pointer">
+          {/* Time Selector */}
+          <div className="flex items-center bg-white px-4 py-4 min-w-[170px] shadow-sm border border-transparent focus-within:border-black cursor-pointer rounded-md md:rounded-none">
             <svg className="w-6 h-6 mr-2 text-black" fill="currentColor" viewBox="0 0 24 24">
               <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" />
             </svg>
@@ -46,14 +53,16 @@ export default function HeroSection() {
             </select>
           </div>
 
-          {/* Find Food Button[cite: 1] */}
-          <button className="bg-black text-white px-10 py-4 font-bold text-lg hover:bg-zinc-800 transition-colors duration-200">
+          {/* Find Food Button */}
+          <button 
+            onClick={handleFakeLogin} 
+            className="bg-black text-white px-10 py-4 font-bold text-lg hover:bg-zinc-800 transition-colors duration-200 rounded-md md:rounded-none"
+          >
             Find Food
           </button>
         </div>
 
-        {/* Auth Link - AMS style NavLink[cite: 1, 2] */}
-        <p className="mt-4 text-[16px] font-semibold text-black">
+        <p className="mt-4 text-[16px] font-semibold text-white drop-shadow-md">
           Or <NavLink to="/login" className="underline hover:no-underline">Sign In</NavLink>
         </p>
       </div>
