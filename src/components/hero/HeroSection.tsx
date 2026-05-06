@@ -1,29 +1,30 @@
 import { NavLink } from 'react-router-dom'
-// මෙන්න හරිම path එක
+// path එක සහ file name එකේ අකුරු වල හැඩය (Capital/Simple) හරියටම හරිද බලන්න
 import heroBg from '../../assets/hero/Hero.jpg' 
 
 export default function HeroSection() {
   
-  // Nikan log wena function eka
   const handleFakeLogin = () => {
-    // Local storage ekata dummy token ekak daanawa
     localStorage.setItem("token", "fake-jwt-token-12345");
-    
-    // Page eka refresh karanawa ethakota Home.tsx eke logic eka trigger wenawa
     window.location.reload();
   };
 
   return (
-    <section className="relative h-[550px] w-full flex items-center px-4 sm:px-12 overflow-hidden">
-      <div className="absolute inset-0 -z-10">
+    // Background color එකක් දුන්නා image එක load වෙනකන් හරි අවුලක් ගියොත් හරි පේන්න (bg-zinc-900)
+    <section className="relative h-[550px] w-full flex items-center px-4 sm:px-12 overflow-hidden bg-zinc-900">
+      
+      {/* මෙතනින් -z-10 අයින් කළා */}
+      <div className="absolute inset-0">
         <img 
           src={heroBg} 
           alt="Food Background" 
           className="w-full h-full object-cover"
         />
+        {/* ඕනෙ නම් image එකට පොඩි අඳුරු ගතියක් දෙන්න පුළුවන් අකුරු පැහැදිලිව පේන්න: className="... brightness-75" වගේ */}
       </div>
 
-      <div className="max-w-4xl w-full">
+      {/* මෙතනට 'relative z-10' දැම්මා, එතකොට content ටික image එකට උඩින් එනවා */}
+      <div className="relative z-10 max-w-4xl w-full">
         <h1 className="text-[48px] md:text-[54px] font-bold leading-tight mb-8 tracking-tight text-white drop-shadow-lg">
           Order delivery near you
         </h1>
@@ -52,7 +53,7 @@ export default function HeroSection() {
             </select>
           </div>
 
-          {/* Find Food Button - Meka click kalama log wenawa */}
+          {/* Find Food Button */}
           <button 
             onClick={handleFakeLogin} 
             className="bg-black text-white px-10 py-4 font-bold text-lg hover:bg-zinc-800 transition-colors duration-200 rounded-md md:rounded-none"
