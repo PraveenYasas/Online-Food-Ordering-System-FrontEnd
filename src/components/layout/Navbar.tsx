@@ -1,51 +1,83 @@
-import { Bars3Icon, MagnifyingGlassIcon, ShoppingCartIcon, MapPinIcon } from '@heroicons/react/24/outline'
-import { NavLink } from 'react-router-dom'
-
-export default function Navbar() {
+function Navbar() {
   return (
-    <nav className="flex items-center justify-between px-4 py-2 bg-white sticky top-0 z-50 shadow-sm">
-      <div className="flex items-center gap-6">
-        <div className="flex items-center gap-4">
-          <button className="p-2 hover:bg-gray-100 rounded-full transition">
-            <Bars3Icon className="h-6 w-6 text-black" />
+    // Main Container - සම්පූර්ණ Navbar එක
+    <nav className="flex items-center justify-between px-4 py-3 bg-white border-b border-gray-100">
+      
+      {/* 1. Left Section: Menu Icon එකයි Logo එකයි */}
+      <div className="flex items-center gap-4">
+        {/* Hamburger Menu Button */}
+        <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+        
+        {/* Logo */}
+        <div className="text-2xl font-bold tracking-tight cursor-pointer">
+          Bite<span className="text-[#05C167]">Dash</span>
+        </div>
+      </div>
+
+      {/* 2. Middle Section: Delivery/Pickup Toggle එකයි Location එකයි */}
+      {/* lg:flex කියන්නේ ලොකු screens වල විතරක් මේක පෙන්නන්න කියන එක */}
+      <div className="hidden lg:flex items-center gap-6">
+        
+        {/* Toggle Box */}
+        <div className="flex items-center bg-gray-100 p-1 rounded-full">
+          <button className="bg-white px-5 py-2 rounded-full font-semibold text-sm shadow-sm">
+            Delivery
           </button>
-          <NavLink to="/" className="flex items-center">
-            <h1 className="text-2xl font-bold tracking-tighter text-black">
-              Bite<span className="text-[#05C167]">Dash</span>
-            </h1>
-          </NavLink>
+          <button className="px-5 py-2 rounded-full font-semibold text-sm text-gray-600 hover:text-black transition-colors">
+            Pickup
+          </button>
         </div>
-
-        <div className="hidden lg:flex bg-gray-100 p-1 rounded-full">
-          <button className="px-6 py-2 bg-white rounded-full font-bold text-sm shadow-sm">Delivery</button>
-          <button className="px-6 py-2 rounded-full font-bold text-sm hover:bg-gray-200 transition">Pickup</button>
-        </div>
-
-        <div className="hidden md:flex items-center gap-1 cursor-pointer hover:bg-gray-100 p-2 rounded-full transition">
-          <MapPinIcon className="h-5 w-5" />
-          <span className="font-bold text-sm">Upazil Hardware • Now</span>
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M6 9l6 6 6-6"></path></svg>
+        
+        {/* Location Selector */}
+        <div className="flex items-center gap-2 hover:bg-gray-100 px-3 py-2 rounded-full cursor-pointer transition-colors">
+          <svg className="w-5 h-5 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+          <span className="font-medium text-sm">Upazil Hardware • Now</span>
+          <svg className="w-4 h-4 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+          </svg>
         </div>
       </div>
 
-      <div className="hidden sm:flex flex-1 max-w-md mx-4 relative">
-        <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-          <MagnifyingGlassIcon className="h-5 w-5 text-gray-500" />
+      {/* 3. Right Section: Search, Log in, Sign up, Cart */}
+      <div className="flex items-center gap-2 md:gap-4">
+        
+        {/* Search Bar */}
+        <div className="hidden md:flex items-center bg-gray-100 rounded-full px-4 py-2 w-50 lg:w-62.5">
+          <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+          <input 
+            type="text" 
+            placeholder="Search" 
+            className="bg-transparent outline-none ml-2 w-full text-sm placeholder-gray-500" 
+          />
         </div>
-        <input 
-          type="text" 
-          placeholder="Search" 
-          className="w-full bg-gray-100 rounded-full py-2.5 pl-10 pr-4 outline-none focus:ring-2 focus:ring-gray-200"
-        />
-      </div>
 
-      <div className="flex items-center gap-2">
-        <button className="px-4 py-2 font-bold text-sm hover:bg-gray-100 rounded-full transition">Log in</button>
-        <button className="px-5 py-2 font-bold text-sm bg-black text-white rounded-full hover:bg-gray-800 transition">Sign up</button>
-        <button className="p-2 hover:bg-gray-100 rounded-full transition relative">
-          <ShoppingCartIcon className="h-6 w-6" />
+        {/* Buttons */}
+        <button className="hidden sm:block px-4 py-2 font-semibold text-sm hover:bg-gray-100 rounded-full transition-colors">
+          Log in
+        </button>
+        <button className="px-5 py-2 font-semibold text-sm bg-black text-white rounded-full hover:bg-gray-800 transition-colors">
+          Sign up
+        </button>
+
+        {/* Cart Icon */}
+        <button className="p-2 hover:bg-gray-100 rounded-full relative transition-colors ml-1">
+          <svg className="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+          </svg>
         </button>
       </div>
+
     </nav>
-  )
+  );
 }
+
+export default Navbar;
