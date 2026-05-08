@@ -1,71 +1,63 @@
-import { NavLink } from 'react-router-dom'
-// path එක සහ file name එකේ අකුරු වල හැඩය (Capital/Simple) හරියටම හරිද බලන්න
-import heroBg from '../../assets/hero/Hero.jpg' 
+import heroBg from '../../assets/hero/Hero.jpg'; 
 
-export default function HeroSection() {
-  
-  const handleFakeLogin = () => {
-    localStorage.setItem("token", "fake-jwt-token-12345");
-    window.location.reload();
-  };
-
+function HeroSection() {
   return (
-    // Background color එකක් දුන්නා image එක load වෙනකන් හරි අවුලක් ගියොත් හරි පේන්න (bg-zinc-900)
-    <section className="relative h-[550px] w-full flex items-center px-4 sm:px-12 overflow-hidden bg-zinc-900">
+    <section className="relative w-full h-125 lg:h-137.5 flex items-center justify-center">
       
-      {/* මෙතනින් -z-10 අයින් කළා */}
-      <div className="absolute inset-0">
+      <div className="absolute inset-0 z-0">
         <img 
           src={heroBg} 
-          alt="Food Background" 
+          alt="Hero Background" 
           className="w-full h-full object-cover"
         />
-        {/* ඕනෙ නම් image එකට පොඩි අඳුරු ගතියක් දෙන්න පුළුවන් අකුරු පැහැදිලිව පේන්න: className="... brightness-75" වගේ */}
+        <div className="absolute inset-0 bg-black/40"></div>
       </div>
 
-      {/* මෙතනට 'relative z-10' දැම්මා, එතකොට content ටික image එකට උඩින් එනවා */}
-      <div className="relative z-10 max-w-4xl w-full">
-        <h1 className="text-[48px] md:text-[54px] font-bold leading-tight mb-8 tracking-tight text-white drop-shadow-lg">
+      <div className="relative z-10 w-full max-w-5xl px-4 sm:px-6 lg:px-8 flex flex-col items-start">
+        
+        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white tracking-tight mb-8 drop-shadow-lg">
           Order delivery near you
         </h1>
 
-        <div className="flex flex-col md:flex-row items-stretch gap-2">
-          {/* Address Input */}
-          <div className="flex-1 flex items-center bg-white px-4 py-4 shadow-sm border border-transparent focus-within:border-black transition-all rounded-md md:rounded-none">
-            <svg className="w-6 h-6 mr-3 text-black" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+        <div className="w-full max-w-4xl bg-white rounded-xl p-2 flex flex-col md:flex-row items-center gap-2 shadow-xl">
+          
+          <div className="flex-1 flex items-center bg-gray-50 hover:bg-gray-100 transition-colors rounded-lg px-4 py-3 w-full">
+            <svg className="w-6 h-6 text-gray-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
             </svg>
             <input 
               type="text" 
               placeholder="Enter delivery address" 
-              className="w-full outline-none text-lg font-medium placeholder-gray-500"
+              className="w-full bg-transparent outline-none text-gray-800 text-lg placeholder-gray-500"
             />
           </div>
 
-          {/* Time Selector */}
-          <div className="flex items-center bg-white px-4 py-4 min-w-[170px] shadow-sm border border-transparent focus-within:border-black cursor-pointer rounded-md md:rounded-none">
-            <svg className="w-6 h-6 mr-2 text-black" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" />
+          <div className="flex items-center bg-gray-50 hover:bg-gray-100 transition-colors rounded-lg px-4 py-3 w-full md:w-55 cursor-pointer">
+            <svg className="w-6 h-6 text-black mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            <select className="bg-transparent outline-none font-bold text-[16px] w-full cursor-pointer appearance-none">
+            <select className="bg-transparent outline-none text-black font-semibold text-lg w-full cursor-pointer appearance-none">
               <option>Deliver now</option>
-              <option>Schedule for later</option>
+              <option>Schedule later</option>
             </select>
           </div>
 
-          {/* Find Food Button */}
-          <button 
-            onClick={handleFakeLogin} 
-            className="bg-black text-white px-10 py-4 font-bold text-lg hover:bg-zinc-800 transition-colors duration-200 rounded-md md:rounded-none"
-          >
+          <button className="w-full md:w-auto bg-black text-white font-bold text-lg px-8 py-3 rounded-lg hover:bg-zinc-800 transition-colors">
             Find Food
           </button>
+          
         </div>
 
-        <p className="mt-4 text-[16px] font-semibold text-white drop-shadow-md">
-          Or <NavLink to="/login" className="underline hover:no-underline">Sign In</NavLink>
-        </p>
+        <div className="mt-6">
+          <a href="/login" className="text-white font-semibold text-lg underline hover:text-gray-200 transition-colors cursor-pointer drop-shadow-md">
+            Or Sign in
+          </a>
+        </div>
+
       </div>
     </section>
-  )
+  );
 }
+
+export default HeroSection;
