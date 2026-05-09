@@ -1,18 +1,50 @@
-import { Routes, Route } from 'react-router-dom'
-import Navbar from './components/layout/Navbar'
-import Home from './components/home/Home'
-import Footer from './components/layout/Footer'
+import { useState, type ComponentType } from 'react';
+import { Routes, Route } from 'react-router-dom';
 
-function App() {
+import Navbar from './components/layout/Navbar';
+import Home from './components/home/Home';
+import Footer from './components/layout/Footer';
+import LoginModal from './components/auth/LoginModal';
+import SignUpModal from './components/auth/SignUpModal';
+
+export default function App() {
+  
+  const [activeModal, setActiveModal] = useState<'none' | 'login' | 'signup'>('none');
+
+  const NavbarWithAuthActions = Navbar as ComponentType<{
+    onOpenLogin: () => void;
+    onOpenSignUp: () => void;
+  }>;
+
+  const openLogin = () => setActiveModal('login');
+  const openSignUp = () => setActiveModal('signup');
+  const closeModal = () => setActiveModal('none'); 
   return (
     <div className="min-h-screen bg-white font-sans">
-      <Navbar />
+      
+      <NavbarWithAuthActions 
+        onOpenLogin={openLogin} 
+        onOpenSignUp={openSignUp} 
+      />
+      
       <Routes>
         <Route path="/" element={<Home />} />
       </Routes>
+      
       <Footer />
-    </div>
-  )
-}
 
-export default App
+      <LoginModal 
+        isOpen={activeModal === 'login'} 
+        onClose={closeModal} 
+        onSwitchToSignUp={openSignUp} 
+      />
+
+      <SignUpModal 
+        isOpen={activeModal === 'signup'} 
+        onClose={closeModal} 
+        onSwitchToLogin={openLogin} 
+      />
+      
+    </div>
+  );
+}
