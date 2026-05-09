@@ -5,7 +5,7 @@ import Footer from './components/layout/Footer'
 
 function App() {
   return (
-    <div className="min-h-screen bg-white font-sans overflow-x-hidden">
+    <div className="min-h-screen bg-white font-sans">
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
