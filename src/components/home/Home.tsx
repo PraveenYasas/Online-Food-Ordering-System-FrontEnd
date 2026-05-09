@@ -1,4 +1,4 @@
-import CategorySection from "../food/CategorySection"
+import CategorySection from "./CategorySection"
 import HeroSection from "../hero/HeroSection"
 import PromoSection from "../home/PromoSection"
 

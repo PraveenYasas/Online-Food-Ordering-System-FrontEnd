@@ -1,14 +1,18 @@
 import { Routes, Route } from 'react-router-dom'
 import Navbar from './components/layout/Navbar'
 import Home from './components/home/Home'
+import Footer from './components/layout/Footer'
 
-export default function App() {
+function App() {
   return (
-    <div className="min-h-screen bg-white font-sans overflow-x-hidden">
+    <div className="min-h-screen bg-white font-sans">
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
       </Routes>
+      <Footer />
     </div>
   )
 }
+
+export default App

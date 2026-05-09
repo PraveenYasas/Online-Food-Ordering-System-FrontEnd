@@ -1,7 +1,7 @@
 function Navbar() {
   return (
     // Main Container - සම්පූර්ණ Navbar එක
-    <nav className="flex items-center justify-between px-4 py-3 bg-white border-b border-gray-100">
+    <nav className="sticky top-0 z-50 flex items-center justify-between px-4 py-3 bg-white border-b border-gray-100">
       
       {/* 1. Left Section: Menu Icon එකයි Logo එකයි */}
       <div className="flex items-center gap-4">
