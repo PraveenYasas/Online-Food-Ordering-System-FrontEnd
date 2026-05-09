@@ -3,7 +3,7 @@ interface NavbarProps {
   onOpenSignUp: () => void;
 }
 
-export default function Navbar({ onOpenLogin, onOpenSignUp }: NavbarProps) {
+function Navbar({ onOpenLogin, onOpenSignUp }: NavbarProps) {
   return (
     <nav className="sticky top-0 z-50 flex items-center justify-between px-4 py-3 bg-white border-b border-gray-100 shadow-sm">
       
@@ -83,3 +83,5 @@ export default function Navbar({ onOpenLogin, onOpenSignUp }: NavbarProps) {
     </nav>
   );
 }
+
+export default Navbar;
