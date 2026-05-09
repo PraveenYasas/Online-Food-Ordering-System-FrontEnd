@@ -1,4 +1,4 @@
-import { useState, type ComponentType } from 'react';
+import { useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
 
 import Navbar from './components/layout/Navbar';
@@ -11,18 +11,13 @@ export default function App() {
   
   const [activeModal, setActiveModal] = useState<'none' | 'login' | 'signup'>('none');
 
-  const NavbarWithAuthActions = Navbar as ComponentType<{
-    onOpenLogin: () => void;
-    onOpenSignUp: () => void;
-  }>;
-
   const openLogin = () => setActiveModal('login');
   const openSignUp = () => setActiveModal('signup');
   const closeModal = () => setActiveModal('none'); 
   return (
     <div className="min-h-screen bg-white font-sans">
       
-      <NavbarWithAuthActions 
+      <Navbar 
         onOpenLogin={openLogin} 
         onOpenSignUp={openSignUp} 
       />
