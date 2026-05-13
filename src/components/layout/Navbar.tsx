@@ -1,15 +1,14 @@
 interface NavbarProps {
   onOpenLogin: () => void;
   onOpenSignUp: () => void;
+  onOpenSidebar: () => void;
 }
 
-function Navbar({ onOpenLogin, onOpenSignUp }: NavbarProps) {
+function Navbar({ onOpenLogin, onOpenSignUp, onOpenSidebar }: NavbarProps) {
   return (
     <nav className="sticky top-0 z-50 flex items-center justify-between px-4 py-3 bg-white border-b border-gray-100 shadow-sm">
-      
-      {/* 1. Left Section: Hamburger & Logo */}
       <div className="flex items-center gap-4">
-        <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+        <button onClick={onOpenSidebar} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
           <svg className="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
           </svg>
