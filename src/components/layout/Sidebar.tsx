@@ -1,16 +1,17 @@
 interface SidebarProps {
   isOpen: boolean;
   onClose: () => void;
+  onOpenOrders: () => void;
 }
 
-export default function Sidebar({ isOpen, onClose }: SidebarProps) {
+export default function Sidebar({ isOpen, onClose, onOpenOrders }: SidebarProps) {
   return (
     <>
       <div 
         className={`fixed inset-0 z-100 bg-black/60 backdrop-blur-sm transition-opacity duration-300 ${
           isOpen ? 'opacity-100 visible' : 'opacity-0 invisible'
         }`}
-        onClick={onClose} // එළියෙන් click කරාම close වෙන්න
+        onClick={onClose}
       />
 
       <div 
@@ -50,10 +51,10 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
               <span className="font-semibold text-[16px] text-black">Home</span>
             </a>
 
-            <a href="#" className="flex items-center gap-4 px-6 py-4 hover:bg-gray-100 transition-colors">
-              <svg className="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
-              <span className="font-semibold text-[16px] text-black">Orders</span>
-            </a>
+            <button onClick={onOpenOrders} className="w-full flex items-center gap-4 px-6 py-4 hover:bg-gray-100 transition-colors text-left">
+                <svg className="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
+                <span className="font-semibold text-[16px] text-black">Orders</span>
+            </button>
 
             <a href="#" className="flex items-center gap-4 px-6 py-4 hover:bg-gray-100 transition-colors">
               <svg className="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>

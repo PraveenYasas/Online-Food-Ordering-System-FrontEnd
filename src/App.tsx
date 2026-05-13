@@ -6,17 +6,23 @@ import Home from './components/home/Home';
 import Footer from './components/layout/Footer';
 import LoginModal from './components/auth/LoginModal';
 import SignUpModal from './components/auth/SignUpModal';
-import Sidebar from './components/layout/Sidebar'; // Sidebar එක ගෙනාවා
+import Sidebar from './components/layout/Sidebar';
+import OrdersModal from './components/orders/OrdersModal';
 
 export default function App() {
 
-  const [activeModal, setActiveModal] = useState<'none' | 'login' | 'signup'>('none');
+  const [activeModal, setActiveModal] = useState<'none' | 'login' | 'signup' | 'orders'>('none');
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const openLogin = () => setActiveModal('login');
   const openSignUp = () => setActiveModal('signup');
   const closeModal = () => setActiveModal('none'); 
+
+  const openOrders = () => {
+    setIsSidebarOpen(false); 
+    setActiveModal('orders');
+  };
 
   return (
     <div className="min-h-screen bg-white font-sans">
@@ -35,7 +41,13 @@ export default function App() {
 
       <Sidebar 
         isOpen={isSidebarOpen} 
-        onClose={() => setIsSidebarOpen(false)} 
+        onClose={() => setIsSidebarOpen(false)}
+        onOpenOrders={openOrders}
+      />
+
+      <OrdersModal 
+        isOpen={activeModal === 'orders'} 
+        onClose={closeModal} 
       />
 
       {/* Modals */}
