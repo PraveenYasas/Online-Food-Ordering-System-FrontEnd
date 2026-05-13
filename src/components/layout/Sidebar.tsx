@@ -10,7 +10,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
         className={`fixed inset-0 z-100 bg-black/60 backdrop-blur-sm transition-opacity duration-300 ${
           isOpen ? 'opacity-100 visible' : 'opacity-0 invisible'
         }`}
-        onClick={onClose} // එළියෙන් click කරාම close වෙන්න
+        onClick={onClose}
       />
 
       <div 
