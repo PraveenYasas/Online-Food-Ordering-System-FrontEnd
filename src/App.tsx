@@ -8,10 +8,11 @@ import LoginModal from './components/auth/LoginModal';
 import SignUpModal from './components/auth/SignUpModal';
 import Sidebar from './components/layout/Sidebar';
 import OrdersModal from './components/orders/OrdersModal';
+import FavoritesModal from './components/favorites/FavoritesModal';
 
 export default function App() {
 
-  const [activeModal, setActiveModal] = useState<'none' | 'login' | 'signup' | 'orders'>('none');
+  const [activeModal, setActiveModal] = useState<'none' | 'login' | 'signup' | 'orders' | 'favorites'>('none');
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
@@ -22,6 +23,11 @@ export default function App() {
   const openOrders = () => {
     setIsSidebarOpen(false); 
     setActiveModal('orders');
+  };
+
+  const openFavorites = () => {
+    setIsSidebarOpen(false); 
+    setActiveModal('favorites');
   };
 
   return (
@@ -43,10 +49,16 @@ export default function App() {
         isOpen={isSidebarOpen} 
         onClose={() => setIsSidebarOpen(false)}
         onOpenOrders={openOrders}
+        onOpenFavorites={openFavorites}
       />
 
       <OrdersModal 
         isOpen={activeModal === 'orders'} 
+        onClose={closeModal} 
+      />
+
+      <FavoritesModal 
+        isOpen={activeModal === 'favorites'} 
         onClose={closeModal} 
       />
 
