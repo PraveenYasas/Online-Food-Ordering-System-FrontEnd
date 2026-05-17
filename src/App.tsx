@@ -9,16 +9,18 @@ import SignUpModal from './components/auth/SignUpModal';
 import Sidebar from './components/layout/Sidebar';
 import OrdersModal from './components/orders/OrdersModal';
 import FavoritesModal from './components/favorites/FavoritesModal';
+import CartDrawer from './components/cart/CartDrawer';
 
 export default function App() {
 
-  const [activeModal, setActiveModal] = useState<'none' | 'login' | 'signup' | 'orders' | 'favorites'>('none');
+  const [activeModal, setActiveModal] = useState<'none' | 'login' | 'signup' | 'orders' | 'favorites' | 'cart'>('none');
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const openLogin = () => setActiveModal('login');
   const openSignUp = () => setActiveModal('signup');
   const closeModal = () => setActiveModal('none'); 
+  const openCart = () => setActiveModal('cart');
 
   const openOrders = () => {
     setIsSidebarOpen(false); 
@@ -37,6 +39,7 @@ export default function App() {
         onOpenLogin={openLogin} 
         onOpenSignUp={openSignUp} 
         onOpenSidebar={() => setIsSidebarOpen(true)}
+        onOpenCart={openCart}
       />
       
       <Routes>
@@ -44,6 +47,11 @@ export default function App() {
       </Routes>
       
       <Footer />
+
+      <CartDrawer 
+        isOpen={activeModal === 'cart'} 
+        onClose={closeModal} 
+      />
 
       <Sidebar 
         isOpen={isSidebarOpen} 
