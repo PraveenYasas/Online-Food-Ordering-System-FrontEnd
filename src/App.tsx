@@ -10,6 +10,7 @@ import Sidebar from './components/layout/Sidebar';
 import OrdersModal from './components/orders/OrdersModal';
 import FavoritesModal from './components/favorites/FavoritesModal';
 import CartDrawer from './components/cart/CartDrawer';
+import Profile from './components/profile/Profile';
 
 export default function App() {
 
@@ -44,6 +45,7 @@ export default function App() {
       
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/profile" element={<Profile />} />
       </Routes>
       
       <Footer />
