@@ -6,7 +6,7 @@ interface CartDrawerProps {
 }
 
 function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
-  const [isEmpty, setIsEmpty] = useState(false);
+  const [isEmpty] = useState(false);
 
   return (
     <>

@@ -1,3 +1,6 @@
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+
 interface NavbarProps {
   onOpenLogin: () => void;
   onOpenSignUp: () => void;
@@ -5,9 +8,23 @@ interface NavbarProps {
   onOpenCart: () => void;
 }
 
-function Navbar({ onOpenLogin, onOpenSignUp, onOpenSidebar, onOpenCart }: NavbarProps) {
+export default function Navbar({ onOpenLogin, onOpenSignUp, onOpenSidebar, onOpenCart }: NavbarProps) {
+  
+  // මේකෙන් තමයි Stage දෙක පාලනය කරන්නේ
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    // LocalStorage එකේ ටෝකන් එකක් තියෙනවද බලනවා
+    const token = localStorage.getItem("token");
+    if (token) {
+      setIsLoggedIn(true); 
+    }
+  }, []);
+
   return (
     <nav className="sticky top-0 z-50 flex items-center justify-between px-4 py-3 bg-white border-b border-gray-100 shadow-sm">
+      
+      {/* --- Left Section: Hamburger & Logo --- */}
       <div className="flex items-center gap-4">
         <button onClick={onOpenSidebar} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
           <svg className="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -15,12 +32,12 @@ function Navbar({ onOpenLogin, onOpenSignUp, onOpenSidebar, onOpenCart }: Navbar
           </svg>
         </button>
         
-        <div className="text-2xl font-bold tracking-tight cursor-pointer">
+        <Link to="/" className="text-2xl font-bold tracking-tight cursor-pointer">
           Bite<span className="text-[#05C167]">Dash</span>
-        </div>
+        </Link>
       </div>
 
-      {/* 2. Middle Section: Toggle & Location */}
+      {/* --- Middle Section: Toggle & Location --- */}
       <div className="hidden lg:flex items-center gap-6">
         <div className="flex items-center bg-gray-100 p-1 rounded-full">
           <button className="bg-white px-5 py-2 rounded-full font-semibold text-sm shadow-sm text-black">
@@ -43,10 +60,10 @@ function Navbar({ onOpenLogin, onOpenSignUp, onOpenSidebar, onOpenCart }: Navbar
         </div>
       </div>
 
-      {/* 3. Right Section: Search, Cart, Login, Sign up */}
+      {/* --- Right Section --- */}
       <div className="flex items-center gap-2 md:gap-4">
         
-        {/* Search Bar */}
+        {/* Search Bar (මේක හැම වෙලාවෙම පේනවා) */}
         <div className="hidden md:flex items-center bg-gray-100 rounded-full px-4 py-2 w-50 lg:w-64">
           <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -58,34 +75,47 @@ function Navbar({ onOpenLogin, onOpenSignUp, onOpenSidebar, onOpenCart }: Navbar
           />
         </div>
 
-        {/* Cart Icon */}
-        <button 
-          onClick={onOpenCart}
-          className="p-2 hover:bg-gray-100 rounded-full relative transition-colors ml-1"
-        >
-          <svg className="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-          </svg>
-          <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white"></span>
-        </button>
+        {/* --- ඔන්න ඔයා අහපු මැජික් කෑල්ල (Stage 1 and Stage 2) --- */}
+        {isLoggedIn ? (
+          
+          /* ====== STAGE 1: ලොග් වෙලා ඉන්නකොට (Profile + Cart) ====== */
+          <>
+            <Link to="/profile" className="hidden sm:flex items-center gap-2 px-3 py-2 font-semibold text-sm hover:bg-gray-100 rounded-full transition-colors text-black">
+              <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+              Profile
+            </Link>
 
-        {/* Auth Buttons */}
-        <button 
-          onClick={onOpenLogin} 
-          className="hidden sm:block px-4 py-2 font-semibold text-sm hover:bg-gray-100 rounded-full transition-colors text-black"
-        >
-          Log in
-        </button>
-        <button 
-          onClick={onOpenSignUp} 
-          className="px-5 py-2 font-semibold text-sm bg-black text-white rounded-full hover:bg-gray-800 transition-colors"
-        >
-          Sign up
-        </button>
+            <button onClick={onOpenCart} className="p-2 hover:bg-gray-100 rounded-full relative transition-colors ml-1">
+              <svg className="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+              </svg>
+            </button>
+          </>
+
+        ) : (
+
+          /* ====== STAGE 2: ලොග් වෙලා නැතිකොට (Login + Signup + Cart) ====== */
+          <>
+            <button onClick={onOpenLogin} className="hidden sm:block px-4 py-2 font-semibold text-sm hover:bg-gray-100 rounded-full transition-colors text-black">
+              Log in
+            </button>
+            
+            <button onClick={onOpenSignUp} className="px-5 py-2 font-semibold text-sm bg-black text-white rounded-full hover:bg-gray-800 transition-colors">
+              Sign up
+            </button>
+
+            <button onClick={onOpenCart} className="p-2 hover:bg-gray-100 rounded-full relative transition-colors ml-1">
+              <svg className="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+              </svg>
+            </button>
+          </>
+
+        )}
+
       </div>
-
     </nav>
   );
 }
-
-export default Navbar;

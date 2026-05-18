@@ -1,18 +1,26 @@
+import React from 'react';
+
 interface LoginModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSwitchToSignUp: () => void; 
+  onSwitchToSignUp: () => void;
 }
 
 function LoginModal({ isOpen, onClose, onSwitchToSignUp }: LoginModalProps) {
   if (!isOpen) return null;
 
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault(); 
+    localStorage.setItem("token", "dummy-frontend-token-12345"); 
+    window.location.reload(); 
+  };
+
   return (
-    <div className="fixed inset-0 z-100 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
       <div className="bg-white w-full max-w-md rounded-2xl overflow-hidden shadow-2xl flex flex-col">
         
-        {/* Header - More vibrant green directly matching your screenshot */}
-        <div className="bg-[#34A853] p-6 text-white relative">
+        {/* Header */}
+        <div className="bg-[#2b9d58] p-6 text-white relative">
           <button onClick={onClose} className="absolute top-4 right-4 p-1 hover:bg-white/20 rounded-full transition-colors">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -22,57 +30,40 @@ function LoginModal({ isOpen, onClose, onSwitchToSignUp }: LoginModalProps) {
           <p className="text-white/90 text-[15px] mt-1">Sign in to continue ordering</p>
         </div>
 
-        {/* Form */}
+        {/* Form Area */}
         <div className="p-6">
-          <form className="flex flex-col gap-4">
+          <form className="flex flex-col gap-4" onSubmit={handleLogin}>
             <div>
               <label className="block text-sm font-semibold text-gray-800 mb-1.5">Email Address</label>
-              <div className="relative">
-                <svg className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
-                <input 
-                  type="email" 
-                  required 
-                  placeholder="you@example.com" 
-                  className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:border-[#34A853] focus:ring-1 focus:ring-[#34A853]" 
-                />
-              </div>
+              <input type="email" required placeholder="you@example.com" className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:border-[#2b9d58] focus:ring-1 focus:ring-[#2b9d58]" />
             </div>
 
             <div>
               <label className="block text-sm font-semibold text-gray-800 mb-1.5">Password</label>
-              <div className="relative">
-                <svg className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
-                <input 
-                  type="password" 
-                  required 
-                  placeholder="••••••••" 
-                  className="w-full pl-10 pr-10 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:border-[#34A853] focus:ring-1 focus:ring-[#34A853]" 
-                />
-                <button type="button" className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
-                </button>
-              </div>
+              <input type="password" required placeholder="••••••••" className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:border-[#2b9d58] focus:ring-1 focus:ring-[#2b9d58]" />
             </div>
 
             <div className="flex items-center justify-between mt-2">
               <label className="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" className="w-4 h-4 rounded border-gray-300 text-[#34A853] focus:ring-[#34A853]" />
+                <input type="checkbox" className="w-4 h-4 rounded border-gray-300 text-[#2b9d58] focus:ring-[#2b9d58]" />
                 <span className="text-sm text-gray-700 font-medium">Remember me</span>
               </label>
-              <a href="#" className="text-sm font-semibold text-[#34A853] hover:underline">Forgot Password?</a>
+              <a href="#" className="text-sm font-semibold text-[#2b9d58] hover:underline">Forgot Password?</a>
             </div>
 
+            {/* Login Button */}
             <button type="submit" className="w-full bg-[#34A853] hover:bg-[#2b8f45] text-white font-bold py-3 rounded-lg transition-colors mt-2 text-lg">
               Sign In
             </button>
 
-            {/* Social Login with Original SVGs */}
+            {/* Social Login Divider */}
             <div className="relative flex items-center py-4">
               <div className="grow border-t border-gray-200"></div>
               <span className="shrink-0 mx-4 text-gray-400 text-sm font-medium">Or continue with</span>
               <div className="grow border-t border-gray-200"></div>
             </div>
 
+            {/* Social Buttons (Updated with Original SVGs) */}
             <div className="flex gap-4">
               {/* Google Button */}
               <button type="button" className="flex-1 flex items-center justify-center gap-2 border border-gray-300 rounded-lg py-2.5 hover:bg-gray-50 transition-colors font-semibold text-gray-700">
@@ -96,10 +87,11 @@ function LoginModal({ isOpen, onClose, onSwitchToSignUp }: LoginModalProps) {
 
             <div className="text-center mt-4">
               <span className="text-gray-600 text-sm">Don't have an account? </span>
-              <button type="button" onClick={onSwitchToSignUp} className="text-[#34A853] font-bold text-sm hover:underline">
+              <button type="button" onClick={onSwitchToSignUp} className="text-[#2b9d58] font-bold text-sm hover:underline">
                 Sign Up
               </button>
             </div>
+            
           </form>
         </div>
       </div>

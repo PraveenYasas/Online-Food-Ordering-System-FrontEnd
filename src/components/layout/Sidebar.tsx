@@ -6,6 +6,12 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ isOpen, onClose, onOpenOrders, onOpenFavorites }: SidebarProps) {
+
+  const handleLogout = () => {
+    localStorage.removeItem("token"); // ටෝකන් එක මකනවා
+    window.location.reload(); // ආයේ රීලෝඩ් කරනවා
+  };
+
   return (
     <>
       <div 
@@ -72,7 +78,10 @@ export default function Sidebar({ isOpen, onClose, onOpenOrders, onOpenFavorites
 
         {/* 3. Bottom Section (Sign out) */}
         <div className="border-t border-gray-200 py-4">
-          <button className="w-full text-left px-6 py-3 font-semibold text-[16px] text-black hover:bg-gray-100 transition-colors">
+          <button 
+            onClick={handleLogout} // <--- මේක තමයි අලුතෙන් දැම්මේ
+            className="w-full text-left px-6 py-3 font-semibold text-[16px] text-black hover:bg-gray-100 transition-colors"
+          >
             Sign out
           </button>
         </div>
