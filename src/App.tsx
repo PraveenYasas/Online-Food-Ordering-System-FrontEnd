@@ -11,11 +11,13 @@ import OrdersModal from './components/orders/OrdersModal';
 import FavoritesModal from './components/favorites/FavoritesModal';
 import CartDrawer from './components/cart/CartDrawer';
 import Profile from './components/profile/Profile';
+// import AdminPanel from './components/admin/AdminPanel';
 
-export default function App() {
+function App() {
+
+  // return <AdminPanel />;
 
   const [activeModal, setActiveModal] = useState<'none' | 'login' | 'signup' | 'orders' | 'favorites' | 'cart'>('none');
-
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const openLogin = () => setActiveModal('login');
@@ -88,3 +90,5 @@ export default function App() {
     </div>
   );
 }
+
+export default App;
