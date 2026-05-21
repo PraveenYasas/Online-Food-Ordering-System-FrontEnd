@@ -11,19 +11,21 @@ import OrdersModal from './components/orders/OrdersModal';
 import FavoritesModal from './components/favorites/FavoritesModal';
 import CartDrawer from './components/cart/CartDrawer';
 import Profile from './components/profile/Profile';
+import LocationModal from './components/location/LocationModal';
 // import AdminPanel from './components/admin/AdminPanel';
 
 function App() {
 
   // return <AdminPanel />;
 
-  const [activeModal, setActiveModal] = useState<'none' | 'login' | 'signup' | 'orders' | 'favorites' | 'cart'>('none');
+  const [activeModal, setActiveModal] = useState<'none' | 'login' | 'signup' | 'orders' | 'favorites' | 'cart' | 'location'>('none');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const openLogin = () => setActiveModal('login');
   const openSignUp = () => setActiveModal('signup');
   const closeModal = () => setActiveModal('none'); 
   const openCart = () => setActiveModal('cart');
+  const openLocation = () => setActiveModal('location');
 
   const openOrders = () => {
     setIsSidebarOpen(false); 
@@ -43,6 +45,7 @@ function App() {
         onOpenSignUp={openSignUp} 
         onOpenSidebar={() => setIsSidebarOpen(true)}
         onOpenCart={openCart}
+        onOpenLocation={openLocation}
       />
       
       <Routes>
@@ -85,6 +88,11 @@ function App() {
         isOpen={activeModal === 'signup'} 
         onClose={closeModal} 
         onSwitchToLogin={openLogin} 
+      />
+
+      <LocationModal 
+        isOpen={activeModal === 'location'} 
+        onClose={closeModal} 
       />
       
     </div>
