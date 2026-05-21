@@ -6,12 +6,14 @@ interface NavbarProps {
   onOpenSignUp: () => void;
   onOpenSidebar: () => void;
   onOpenCart: () => void;
-  onOpenLocation?: () => void; // <--- Hosa prop add madide
+  onOpenLocation?: () => void;
 }
 
-function Navbar({ onOpenLogin, onOpenSignUp, onOpenSidebar, onOpenCart, onOpenLocation }: NavbarProps) {
+export default function Navbar({ onOpenLogin, onOpenSignUp, onOpenSidebar, onOpenCart, onOpenLocation }: NavbarProps) {
   
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  
+  const [orderType, setOrderType] = useState<'delivery' | 'pickup'>('delivery');
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -38,16 +40,31 @@ function Navbar({ onOpenLogin, onOpenSignUp, onOpenSidebar, onOpenCart, onOpenLo
 
       {/* --- Middle Section: Toggle & Location --- */}
       <div className="hidden lg:flex items-center gap-6">
-        <div className="flex items-center bg-gray-100 p-1 rounded-full">
-          <button className="bg-white px-5 py-2 rounded-full font-semibold text-sm shadow-sm text-black">
+        
+        <div className="flex items-center bg-gray-100 p-1 rounded-full relative">
+          <button 
+            onClick={() => setOrderType('delivery')}
+            className={`px-5 py-2 rounded-full font-semibold text-sm transition-all duration-300 ease-in-out ${
+              orderType === 'delivery' 
+                ? 'bg-white shadow-sm text-black' 
+                : 'text-gray-600 hover:text-black'
+            }`}
+          >
             Delivery
           </button>
-          <button className="px-5 py-2 rounded-full font-semibold text-sm text-gray-600 hover:text-black transition-colors">
+          
+          <button 
+            onClick={() => setOrderType('pickup')}
+            className={`px-5 py-2 rounded-full font-semibold text-sm transition-all duration-300 ease-in-out ${
+              orderType === 'pickup' 
+                ? 'bg-white shadow-sm text-black' 
+                : 'text-gray-600 hover:text-black'
+            }`}
+          >
             Pickup
           </button>
         </div>
         
-        {/* onClick event illi add madide */}
         <div 
           onClick={onOpenLocation} 
           className="flex items-center gap-2 hover:bg-gray-100 px-3 py-2 rounded-full cursor-pointer transition-colors"
@@ -97,5 +114,3 @@ function Navbar({ onOpenLogin, onOpenSignUp, onOpenSidebar, onOpenCart, onOpenLo
     </nav>
   );
 }
-
-export default Navbar;
