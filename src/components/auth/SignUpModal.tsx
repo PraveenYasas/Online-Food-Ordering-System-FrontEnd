@@ -8,7 +8,7 @@ export default function SignUpModal({ isOpen, onClose, onSwitchToLogin }: SignUp
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[120] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-120 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
       
       {/* Modal Container */}
       <div className="bg-white w-full max-w-md rounded-2xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
