@@ -1,6 +1,5 @@
 import { createContext, useContext, useState, type ReactNode } from 'react';
 
-// Cart එක ඇතුළට යන කෑම වල විස්තර
 export interface CartItem {
     id: number;
     name: string;
@@ -21,7 +20,6 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 export function CartProvider({ children }: { children: ReactNode }) {
     const [cartItems, setCartItems] = useState<CartItem[]>([]);
 
-    // අලුත් කෑමක් Cart එකට දාන මෙතඩ් එක
     const addToCart = (newItem: CartItem) => {
         setCartItems((prevItems) => {
         const existingItem = prevItems.find(item => item.id === newItem.id);
@@ -31,22 +29,19 @@ export function CartProvider({ children }: { children: ReactNode }) {
             item.id === newItem.id ? { ...item, quantity: item.quantity + 1 } : item
             );
         }
-        // අලුත් එකක් නම් කෙලින්ම දානවා
+
         return [...prevItems, { ...newItem, quantity: 1 }];
         });
     };
 
-    // Cart එකෙන් අයින් කරන මෙතඩ් එක
     const removeFromCart = (id: number) => {
     setCartItems((prevItems) => prevItems.filter(item => item.id !== id));
   };
 
-// මුළු Cart එකම හිස් කරන මෙතඩ් එක (Checkout කරාම ඕනේ වෙනවා)
 const clearCart = () => {
     setCartItems([]);
 };
 
-// Total එක හදන විදිය
 const cartTotal = cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
 
 return (
@@ -56,7 +51,6 @@ return (
   );
 }
 
-// ලේසියෙන් අනිත් Components වලට Cart එක ගන්න පුළුවන් වෙන්න Custom Hook එකක්
 export function useCart() {
     const context = useContext(CartContext);
     if (context === undefined) {
