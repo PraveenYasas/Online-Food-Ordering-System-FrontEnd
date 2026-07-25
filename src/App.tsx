@@ -10,7 +10,7 @@ import Sidebar from './components/layout/Sidebar';
 import OrdersModal from './components/orders/OrdersModal';
 import FavoritesModal from './components/favorites/FavoritesModal';
 import CartDrawer from './components/cart/CartDrawer';
-import Profile from './components/profile/profile';
+import Profile from './components/profile/Profile';
 import LocationModal from './components/location/LocationModal';
 import { CartProvider } from './components/cart/CartContext';
 // import AdminPanel from './components/admin/AdminPanel';
