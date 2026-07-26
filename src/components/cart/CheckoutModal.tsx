@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useCart } from './CartContext'; // Context එක Import කරගන්න
 
 interface CheckoutModalProps {
   isOpen: boolean;
@@ -7,18 +8,36 @@ interface CheckoutModalProps {
 
 function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
   const [paymentMethod, setPaymentMethod] = useState('cod');
+  
+  // Context එකෙන් ඩේටා ගන්නවා
+  const { cartTotal, clearCart } = useCart();
 
   if (!isOpen) return null;
 
+  // ගණන් හදන කෑල්ල ආයෙත් (Checkout එකේ යටින් පෙන්නන්න)
+  const serviceFee = 2.50;
+  const tax = cartTotal * 0.08;
+  const promoDiscount = 5.00;
+  const finalTotal = cartTotal > 0 ? (cartTotal + serviceFee + tax - promoDiscount) : 0;
+
+  // Checkout බටන් එක එබුවම වෙන දේ
+  const handleCheckout = () => {
+    // ඉස්සරහට මෙතනින් තමයි ඔයාගේ Spring Boot Backend එකට Axios එකෙන් Request එක යවන්නේ.
+    console.log("Placing order for LKR", finalTotal.toFixed(2));
+    
+    // වැඩේ ඉවර වුනාම
+    alert("Order Placed Successfully!");
+    clearCart(); // Cart එක හිස් කරනවා
+    onClose();   // Modal එක වහනවා
+  };
+
   return (
-    <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 sm:p-6">
-      {/* Background Overlay */}
+    <div className="fixed inset-0 z-200 flex items-center justify-center p-4 sm:p-6">
       <div 
         className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
         onClick={onClose}
       />
 
-      {/* Modal Content */}
       <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden flex flex-col max-h-[90vh]">
         
         {/* Header */}
@@ -67,7 +86,6 @@ function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                   <span className="font-semibold text-gray-900 block">Cash on Delivery</span>
                   <span className="text-xs text-gray-500">Pay when you receive the order</span>
                 </div>
-                <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
               </label>
 
               <label className={`flex items-center gap-3 p-4 rounded-xl border cursor-pointer transition-all ${paymentMethod === 'card' ? 'border-[#34A853] bg-[#f0f9f2]' : 'border-gray-200 hover:border-gray-300'}`}>
@@ -83,7 +101,6 @@ function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                   <span className="font-semibold text-gray-900 block">Credit / Debit Card</span>
                   <span className="text-xs text-gray-500">Pay securely online</span>
                 </div>
-                <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>
               </label>
 
             </div>
@@ -95,9 +112,14 @@ function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
         <div className="p-5 border-t border-gray-100 bg-gray-50 shrink-0">
           <div className="flex justify-between items-center mb-4">
             <span className="text-gray-600 font-medium">Total to Pay</span>
-            <span className="text-xl font-bold text-[#34A853]">LKR 1023.50</span>
+            {/* Dynamic Total */}
+            <span className="text-xl font-bold text-[#34A853]">LKR {finalTotal.toFixed(2)}</span>
           </div>
-          <button className="w-full bg-[#34A853] hover:bg-[#2b8f45] transition-colors text-white font-bold py-3.5 rounded-xl text-lg">
+          {/* onClick එකට handleCheckout ෆන්ක්ෂන් එක දුන්නා */}
+          <button 
+            onClick={handleCheckout} 
+            className="w-full bg-[#34A853] hover:bg-[#2b8f45] transition-colors text-white font-bold py-3.5 rounded-xl text-lg"
+          >
             Confirm & Place Order
           </button>
         </div>

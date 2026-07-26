@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import CheckoutModal from './CheckoutModal';
+import { useCart } from './CartContext'; // Context එක Import කරගන්න
 
 interface CartDrawerProps {
   isOpen: boolean;
@@ -7,8 +8,19 @@ interface CartDrawerProps {
 }
 
 function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
-  const [isEmpty] = useState(false);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+  
+  // Context එකෙන් Cart එකේ ඩේටා ටික ගන්නවා
+  const { cartItems, cartTotal, removeFromCart } = useCart();
+  
+  // Cart එක හිස්ද කියලා බලනවා
+  const isEmpty = cartItems.length === 0;
+
+  // ගණන් හදන කෑල්ල (Dynamic)
+  const serviceFee = 2.50;
+  const tax = cartTotal * 0.08; // 8% Tax
+  const promoDiscount = 5.00;
+  const finalTotal = cartTotal > 0 ? (cartTotal + serviceFee + tax - promoDiscount) : 0;
 
   return (
     <>
@@ -25,7 +37,7 @@ function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
         }`}
       >
         
-        {/* Header - Green Background */}
+        {/* Header */}
         <div className="bg-[#34A853] p-6 text-white relative shrink-0">
           <button onClick={onClose} className="absolute top-4 right-4 p-2 hover:bg-white/20 rounded-full transition-colors">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -35,7 +47,7 @@ function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
           
           <h2 className="text-2xl font-bold tracking-tight">Your Cart</h2>
           <p className="text-white/90 text-sm mt-1">
-            {isEmpty ? '0 items' : '1 item'} • {isEmpty ? 'Shanghai Family Restaurant' : 'C Foods'}
+            {isEmpty ? '0 items' : `${cartItems.length} item(s)`} • C Foods
           </p>
 
           {!isEmpty && (
@@ -50,7 +62,6 @@ function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
         <div className="flex-1 overflow-y-auto no-scrollbar flex flex-col">
           
           {isEmpty ? (
-            // --- EMPTY CART STATE ---
             <div className="flex-1 flex flex-col items-center justify-center p-8 text-center h-full">
               <div className="w-32 h-32 bg-gray-100 rounded-full flex items-center justify-center mb-6">
                 <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -64,7 +75,6 @@ function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
               </button>
             </div>
           ) : (
-            // --- FILLED CART STATE ---
             <div className="p-6 flex flex-col gap-6">
               
               {/* Delivery Address Box */}
@@ -84,14 +94,27 @@ function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
                 Order Items
               </h4>
+
+              {/* Dynamic Items List (අලුතින් එකතු කරපු කෑල්ල) */}
+              <div className="flex flex-col gap-4 mb-2">
+                {cartItems.map((item) => (
+                  <div key={item.id} className="flex justify-between items-center">
+                    <div>
+                      <p className="font-semibold text-gray-900">{item.name} x {item.quantity}</p>
+                      <button onClick={() => removeFromCart(item.id)} className="text-xs text-red-500 hover:underline">Remove</button>
+                    </div>
+                    <p className="font-medium text-gray-900">LKR {(item.price * item.quantity).toFixed(2)}</p>
+                  </div>
+                ))}
+              </div>
               
               <hr className="border-gray-100" />
 
-              {/* Receipt Breakdown */}
+              {/* Dynamic Receipt Breakdown */}
               <div className="flex flex-col gap-3">
                 <div className="flex justify-between text-[15px] text-gray-600">
                   <span>Subtotal</span>
-                  <span className="font-semibold text-gray-900">LKR 950.00</span>
+                  <span className="font-semibold text-gray-900">LKR {cartTotal.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-[15px] text-gray-600">
                   <span>Delivery Fee</span>
@@ -99,31 +122,31 @@ function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                 </div>
                 <div className="flex justify-between text-[15px] text-gray-600">
                   <span>Service Fee</span>
-                  <span className="font-semibold text-gray-900">LKR 2.50</span>
+                  <span className="font-semibold text-gray-900">LKR {serviceFee.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-[15px] text-gray-600">
                   <span>Tax (8%)</span>
-                  <span className="font-semibold text-gray-900">LKR 76.00</span>
+                  <span className="font-semibold text-gray-900">LKR {tax.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-[15px] text-[#34A853] font-medium">
                   <span>Promo Discount</span>
-                  <span>-LKR 5.00</span>
+                  <span>-LKR {promoDiscount.toFixed(2)}</span>
                 </div>
               </div>
 
               <hr className="border-gray-200 my-2" />
 
-              {/* Total */}
+              {/* Final Total */}
               <div className="flex justify-between items-center">
                 <span className="text-xl font-bold text-gray-900">Total</span>
-                <span className="text-2xl font-bold text-[#34A853]">LKR 1023.50</span>
+                <span className="text-2xl font-bold text-[#34A853]">LKR {finalTotal.toFixed(2)}</span>
               </div>
 
             </div>
           )}
         </div>
 
-        {/* Footer (Proceed to Checkout Button & Terms) - Only show if not empty */}
+        {/* Footer */}
         {!isEmpty && (
           <div className="p-6 bg-white border-t border-gray-100 shrink-0">
             <button onClick={() => setIsCheckoutOpen(true)} className="w-full bg-[#34A853] hover:bg-[#2b8f45] transition-colors text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 text-lg">

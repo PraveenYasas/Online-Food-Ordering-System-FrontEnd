@@ -12,6 +12,7 @@ import FavoritesModal from './components/favorites/FavoritesModal';
 import CartDrawer from './components/cart/CartDrawer';
 import Profile from './components/profile/Profile';
 import LocationModal from './components/location/LocationModal';
+import { CartProvider } from './components/cart/CartContext';
 // import AdminPanel from './components/admin/AdminPanel';
 
 function App() {
@@ -38,64 +39,66 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-white font-sans">
-      
-      <Navbar 
-        onOpenLogin={openLogin} 
-        onOpenSignUp={openSignUp} 
-        onOpenSidebar={() => setIsSidebarOpen(true)}
-        onOpenCart={openCart}
-        onOpenLocation={openLocation}
-      />
-      
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/profile" element={<Profile />} />
-      </Routes>
-      
-      <Footer />
+    <CartProvider>
+      <div className="min-h-screen bg-white font-sans">
+        
+        <Navbar 
+          onOpenLogin={openLogin} 
+          onOpenSignUp={openSignUp} 
+          onOpenSidebar={() => setIsSidebarOpen(true)}
+          onOpenCart={openCart}
+          onOpenLocation={openLocation}
+        />
+        
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/profile" element={<Profile />} />
+        </Routes>
+        
+        <Footer />
 
-      <CartDrawer 
-        isOpen={activeModal === 'cart'} 
-        onClose={closeModal} 
-      />
+        <CartDrawer 
+          isOpen={activeModal === 'cart'} 
+          onClose={closeModal} 
+        />
 
-      <Sidebar 
-        isOpen={isSidebarOpen} 
-        onClose={() => setIsSidebarOpen(false)}
-        onOpenOrders={openOrders}
-        onOpenFavorites={openFavorites}
-      />
+        <Sidebar 
+          isOpen={isSidebarOpen} 
+          onClose={() => setIsSidebarOpen(false)}
+          onOpenOrders={openOrders}
+          onOpenFavorites={openFavorites}
+        />
 
-      <OrdersModal 
-        isOpen={activeModal === 'orders'} 
-        onClose={closeModal} 
-      />
+        <OrdersModal 
+          isOpen={activeModal === 'orders'} 
+          onClose={closeModal} 
+        />
 
-      <FavoritesModal 
-        isOpen={activeModal === 'favorites'} 
-        onClose={closeModal} 
-      />
+        <FavoritesModal 
+          isOpen={activeModal === 'favorites'} 
+          onClose={closeModal} 
+        />
 
-      {/* Modals */}
-      <LoginModal 
-        isOpen={activeModal === 'login'} 
-        onClose={closeModal} 
-        onSwitchToSignUp={openSignUp} 
-      />
+        {/* Modals */}
+        <LoginModal 
+          isOpen={activeModal === 'login'} 
+          onClose={closeModal} 
+          onSwitchToSignUp={openSignUp} 
+        />
 
-      <SignUpModal 
-        isOpen={activeModal === 'signup'} 
-        onClose={closeModal} 
-        onSwitchToLogin={openLogin} 
-      />
+        <SignUpModal 
+          isOpen={activeModal === 'signup'} 
+          onClose={closeModal} 
+          onSwitchToLogin={openLogin} 
+        />
 
-      <LocationModal 
-        isOpen={activeModal === 'location'} 
-        onClose={closeModal} 
-      />
-      
-    </div>
+        <LocationModal 
+          isOpen={activeModal === 'location'} 
+          onClose={closeModal} 
+        />
+        
+      </div>
+    </CartProvider>
   );
 }
 
