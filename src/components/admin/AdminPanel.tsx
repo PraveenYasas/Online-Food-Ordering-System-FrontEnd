@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 export default function AdminPanel() {
   const [activeTab, setActiveTab] = useState<'dashboard' | 'stores' | 'menu'>('dashboard');
@@ -13,9 +14,9 @@ export default function AdminPanel() {
       {/* Admin Sidebar */}
       <aside className="w-64 bg-white border-r border-gray-200 flex flex-col md:flex">
         <div className="h-16 flex items-center px-6 border-b border-gray-100">
-          <span className="text-2xl font-black tracking-tighter">
-            Bite<span className="text-[#34A853]">Dash</span> <span className="text-sm font-medium text-gray-400 ml-1">Admin</span>
-          </span>
+          <Link to="/" className="text-2xl font-bold tracking-tight cursor-pointer text-black hover:opacity-90 transition-opacity">
+            Bite<span className="text-[#05C167]">Dash</span> <span className="text-sm font-medium text-gray-400 ml-1">Admin</span>
+          </Link>
         </div>
         
         <nav className="flex-1 p-4 space-y-1">
