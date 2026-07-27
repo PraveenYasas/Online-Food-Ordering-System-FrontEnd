@@ -11,7 +11,7 @@ export default function AdminPanel() {
     <div className="min-h-screen bg-gray-50 flex">
       
       {/* Admin Sidebar */}
-      <aside className="w-64 bg-white border-r border-gray-200 flex flex-col hidden md:flex">
+      <aside className="w-64 bg-white border-r border-gray-200 flex flex-col md:flex">
         <div className="h-16 flex items-center px-6 border-b border-gray-100">
           <span className="text-2xl font-black tracking-tighter">
             Bite<span className="text-[#34A853]">Dash</span> <span className="text-sm font-medium text-gray-400 ml-1">Admin</span>
@@ -156,7 +156,7 @@ export default function AdminPanel() {
         
         {/* Add Store Modal */}
         {isStoreModalOpen && (
-          <div className="fixed inset-0 z-[200] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="fixed inset-0 z-200 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
             <div className="bg-white w-full max-w-lg rounded-2xl overflow-hidden shadow-2xl flex flex-col">
               <div className="bg-[#34A853] p-5 text-white flex justify-between items-center">
                 <h2 className="text-xl font-bold">Add New Store</h2>
@@ -201,7 +201,7 @@ export default function AdminPanel() {
 
         {/* Add Food Modal */}
         {isFoodModalOpen && (
-          <div className="fixed inset-0 z-[200] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="fixed inset-0 z-200 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
             <div className="bg-white w-full max-w-lg rounded-2xl overflow-hidden shadow-2xl flex flex-col">
               <div className="bg-[#34A853] p-5 text-white flex justify-between items-center">
                 <h2 className="text-xl font-bold">Add Food Item</h2>
