@@ -9,14 +9,11 @@ interface CartDrawerProps {
 
 function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
-  
-  // Context එකෙන් Cart එකේ ඩේටා ටික ගන්නවා
+
   const { cartItems, cartTotal, removeFromCart } = useCart();
-  
-  // Cart එක හිස්ද කියලා බලනවා
+
   const isEmpty = cartItems.length === 0;
 
-  // ගණන් හදන කෑල්ල (Dynamic)
   const serviceFee = 2.50;
   const tax = cartTotal * 0.08; // 8% Tax
   const promoDiscount = 5.00;

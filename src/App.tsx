@@ -10,10 +10,10 @@ import Sidebar from './components/layout/Sidebar';
 import OrdersModal from './components/orders/OrdersModal';
 import FavoritesModal from './components/favorites/FavoritesModal';
 import CartDrawer from './components/cart/CartDrawer';
-import Profile from './components/profile/Profile';
+import Profile from './components/profile/profile';
 import LocationModal from './components/location/LocationModal';
 import { CartProvider } from './components/cart/CartContext';
-// import AdminPanel from './components/admin/AdminPanel';
+import AdminPanel from './components/admin/AdminPanel';
 
 function App() {
 
@@ -53,6 +53,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/admin" element={<AdminPanel />} />
         </Routes>
         
         <Footer />
@@ -67,6 +68,10 @@ function App() {
           onClose={() => setIsSidebarOpen(false)}
           onOpenOrders={openOrders}
           onOpenFavorites={openFavorites}
+          onOpenAdminPanel={() => {
+            setIsSidebarOpen(false);
+            window.location.href = '/admin'; // Redirect to the admin panel
+          }}
         />
 
         <OrdersModal 
