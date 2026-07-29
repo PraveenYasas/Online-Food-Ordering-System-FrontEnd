@@ -1,4 +1,5 @@
 import React, { useRef, useState } from 'react';
+
 interface CategorySectionProps {
   selectedCategory: string;
   onSelectCategory: (category: string) => void;
@@ -60,16 +61,27 @@ function CategorySection({ selectedCategory, onSelectCategory }: CategorySection
   };
 
   return (
-    <div className="relative w-full py-6 border-b border-gray-100 bg-white group/slider">
-      <button onClick={() => scroll('left')} className="absolute left-2 top-1/2 -translate-y-1/2 z-10 bg-white shadow-md hover:shadow-lg rounded-full p-2 flex items-center justify-center opacity-0 group-hover/slider:opacity-100 transition-opacity">
-        <svg className="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+    <div className="relative w-full py-6 border-b border-gray-100 bg-white">
+      
+      <button 
+        onClick={() => scroll('left')} 
+        className="absolute left-2 top-1/2 -translate-y-1/2 z-40 bg-white shadow-md hover:shadow-lg rounded-full p-2 flex items-center justify-center transition-all border border-gray-100 cursor-pointer"
+      >
+        <svg className="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
+        </svg>
       </button>
 
       <div 
         ref={scrollRef} 
-        className={`flex gap-6 overflow-x-auto px-12 select-none [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
-        onMouseDown={startDrag} onMouseLeave={stopDrag} onMouseUp={stopDrag} onMouseMove={onDrag}
-        onTouchStart={startDrag} onTouchEnd={stopDrag} onTouchMove={onDrag}
+        className={`flex gap-6 overflow-x-auto px-14 py-4 select-none [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
+        onMouseDown={startDrag} 
+        onMouseLeave={stopDrag} 
+        onMouseUp={stopDrag} 
+        onMouseMove={onDrag}
+        onTouchStart={startDrag} 
+        onTouchEnd={stopDrag} 
+        onTouchMove={onDrag}
       >
         {categories.map((cat, index) => (
           <div 
@@ -80,6 +92,7 @@ function CategorySection({ selectedCategory, onSelectCategory }: CategorySection
             <div className={`w-18.75 h-18.75 rounded-full ${cat.bgColor} flex items-center justify-center text-4xl transition-all duration-200 pointer-events-none ${selectedCategory === cat.name ? 'ring-4 ring-[#34A853] ring-offset-2 scale-105' : 'hover:scale-105'}`}>
               {cat.icon}
             </div>
+            {/* Title */}
             <span className={`text-[15px] pointer-events-none transition-colors ${selectedCategory === cat.name ? 'font-bold text-[#34A853]' : 'font-semibold text-gray-800'}`}>
               {cat.name}
             </span>
@@ -87,9 +100,15 @@ function CategorySection({ selectedCategory, onSelectCategory }: CategorySection
         ))}
       </div>
 
-      <button onClick={() => scroll('right')} className="absolute right-2 top-1/2 -translate-y-1/2 z-10 bg-white shadow-md hover:shadow-lg rounded-full p-2 flex items-center justify-center opacity-0 group-hover/slider:opacity-100 transition-opacity">
-        <svg className="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+      <button 
+        onClick={() => scroll('right')} 
+        className="absolute right-2 top-1/2 -translate-y-1/2 z-40 bg-white shadow-md hover:shadow-lg rounded-full p-2 flex items-center justify-center transition-all border border-gray-100 cursor-pointer"
+      >
+        <svg className="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
+        </svg>
       </button>
+
     </div>
   );
 }
