@@ -5,11 +5,11 @@ const promos = [
   { title: '40% Off for New Users*', desc: 'Unlock big savings! Get up to 40% off on 1,000+ items', color: 'bg-emerald-50' }
 ]
 
-export default function PromoSection() {
+function PromoSection() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 px-6 py-4 mb-10">
       {promos.map((promo) => (
-        <div key={promo.title} className={`${promo.color} p-6 rounded-2xl cursor-pointer hover:opacity-90 transition min-h-[160px] flex flex-col justify-between`}>
+        <div key={promo.title} className={`${promo.color} p-6 rounded-2xl cursor-pointer hover:opacity-90 transition min-h-40 flex flex-col justify-between`}>
           <div>
             <h3 className="text-xl font-bold leading-tight mb-2 text-black">{promo.title}</h3>
             <p className="text-sm text-gray-700">{promo.desc}</p>
@@ -19,3 +19,5 @@ export default function PromoSection() {
     </div>
   )
 }
+
+export default PromoSection;

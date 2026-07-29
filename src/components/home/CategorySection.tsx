@@ -17,7 +17,7 @@ const categories = [
   { name: 'American', icon: '🌭', bgColor: 'bg-red-50' },
 ];
 
-export default function CategorySection() {
+function CategorySection() {
   const scrollRef = useRef<HTMLDivElement>(null);
   
   const [isDragging, setIsDragging] = useState(false);
@@ -116,3 +116,5 @@ export default function CategorySection() {
     </div>
   );
 }
+
+export default CategorySection;
