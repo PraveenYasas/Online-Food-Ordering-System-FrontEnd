@@ -3,6 +3,7 @@ import { useState } from 'react';
 interface LocationModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onSelectAddress?: (address: string) => void;
 }
 
 export default function LocationModal({ isOpen, onClose }: LocationModalProps) {
