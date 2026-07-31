@@ -1,7 +1,7 @@
 interface SignUpModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSwitchToLogin: () => void; // Login එකට මාරු වෙන්න
+  onSwitchToLogin: () => void;
 }
 
 export default function SignUpModal({ isOpen, onClose, onSwitchToLogin }: SignUpModalProps) {
@@ -10,10 +10,9 @@ export default function SignUpModal({ isOpen, onClose, onSwitchToLogin }: SignUp
   return (
     <div className="fixed inset-0 z-120 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
       
-      {/* Modal Container */}
       <div className="bg-white w-full max-w-md rounded-2xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
         
-        {/* Header - Green Background matching login */}
+        {/* Header */}
         <div className="bg-[#2b9d58] p-6 text-white relative shrink-0">
           <button onClick={onClose} className="absolute top-4 right-4 p-1 hover:bg-white/20 rounded-full transition-colors">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -23,7 +22,7 @@ export default function SignUpModal({ isOpen, onClose, onSwitchToLogin }: SignUp
           <h2 className="text-[28px] font-bold tracking-tight">Join us and start ordering!</h2>
         </div>
 
-        {/* Form Area - Scrollable */}
+        {/* Form Area */}
         <div className="p-6 overflow-y-auto no-scrollbar">
           <form className="flex flex-col gap-4">
             
@@ -80,7 +79,7 @@ export default function SignUpModal({ isOpen, onClose, onSwitchToLogin }: SignUp
               Create Account
             </button>
 
-            {/* ====== STAGE 2: Social Buttons Section matching login modal ====== */}
+            {/* Social Buttons Section */}
             <div className="relative flex items-center py-4">
               <div className="grow border-t border-gray-200"></div>
               <span className="shrink-0 mx-4 text-gray-400 text-sm font-medium">Or continue with</span>
@@ -88,7 +87,6 @@ export default function SignUpModal({ isOpen, onClose, onSwitchToLogin }: SignUp
             </div>
 
             <div className="flex gap-4">
-              {/* Google Button with SVG */}
               <button type="button" className="flex-1 flex items-center justify-center gap-2 border border-gray-300 rounded-lg py-2.5 hover:bg-gray-50 transition-colors font-semibold text-gray-700">
                 <svg className="w-5 h-5" viewBox="0 0 24 24">
                   <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -98,8 +96,6 @@ export default function SignUpModal({ isOpen, onClose, onSwitchToLogin }: SignUp
                 </svg>
                 Google
               </button>
-
-              {/* Facebook Button with SVG */}
               <button type="button" className="flex-1 flex items-center justify-center gap-2 border border-gray-300 rounded-lg py-2.5 hover:bg-gray-50 transition-colors font-semibold text-gray-700">
                 <svg className="w-5 h-5" fill="#1877F2" viewBox="0 0 24 24">
                   <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
@@ -107,7 +103,6 @@ export default function SignUpModal({ isOpen, onClose, onSwitchToLogin }: SignUp
                 Facebook
               </button>
             </div>
-            {/* ========================================================================= */}
 
             <div className="text-center mt-4">
               <span className="text-gray-600 text-sm">Already have an account? </span>

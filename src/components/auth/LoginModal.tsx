@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -7,12 +7,25 @@ interface LoginModalProps {
 }
 
 function LoginModal({ isOpen, onClose, onSwitchToSignUp }: LoginModalProps) {
+  const [email, setEmail] = useState('');
+
   if (!isOpen) return null;
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault(); 
+    
     localStorage.setItem("token", "dummy-frontend-token-12345"); 
-    window.location.reload(); 
+
+    if (email === 'admin@admin.com') {
+      localStorage.setItem("role", "ADMIN");
+      window.location.href = '/admin';
+    } else if (email === 'shop@shop.com') {
+      localStorage.setItem("role", "SHOP_OWNER");
+      window.location.href = '/shop-admin';
+    } else {
+      localStorage.setItem("role", "USER");
+      window.location.reload();
+    }
   };
 
   return (
@@ -35,7 +48,14 @@ function LoginModal({ isOpen, onClose, onSwitchToSignUp }: LoginModalProps) {
           <form className="flex flex-col gap-4" onSubmit={handleLogin}>
             <div>
               <label className="block text-sm font-semibold text-gray-800 mb-1.5">Email Address</label>
-              <input type="email" required placeholder="you@example.com" className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:border-[#2b9d58] focus:ring-1 focus:ring-[#2b9d58]" />
+              <input 
+                type="email" 
+                required 
+                placeholder="you@example.com" 
+                value={email}
+                onChange={(e) => setEmail(e.target.value)} 
+                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:border-[#2b9d58] focus:ring-1 focus:ring-[#2b9d58]" 
+              />
             </div>
 
             <div>
@@ -63,9 +83,8 @@ function LoginModal({ isOpen, onClose, onSwitchToSignUp }: LoginModalProps) {
               <div className="grow border-t border-gray-200"></div>
             </div>
 
-            {/* Social Buttons (Updated with Original SVGs) */}
+            {/* Social Buttons */}
             <div className="flex gap-4">
-              {/* Google Button */}
               <button type="button" className="flex-1 flex items-center justify-center gap-2 border border-gray-300 rounded-lg py-2.5 hover:bg-gray-50 transition-colors font-semibold text-gray-700">
                 <svg className="w-5 h-5" viewBox="0 0 24 24">
                   <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -75,8 +94,6 @@ function LoginModal({ isOpen, onClose, onSwitchToSignUp }: LoginModalProps) {
                 </svg>
                 Google
               </button>
-
-              {/* Facebook Button */}
               <button type="button" className="flex-1 flex items-center justify-center gap-2 border border-gray-300 rounded-lg py-2.5 hover:bg-gray-50 transition-colors font-semibold text-gray-700">
                 <svg className="w-5 h-5" fill="#1877F2" viewBox="0 0 24 24">
                   <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
