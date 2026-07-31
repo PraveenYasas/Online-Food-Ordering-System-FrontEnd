@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useNavigate } from 'react-router-dom';
 
 import Navbar from './components/layout/Navbar';
 import Home from './components/home/Home';
@@ -14,12 +14,15 @@ import Profile from './components/profile/profile';
 import LocationModal from './components/location/LocationModal';
 import { CartProvider } from './components/cart/CartContext';
 import AdminPanel from './components/admin/AdminPanel';
+import ShopPanel from './components/shop/ShopPanel';
 
 function App() {
   const [activeModal, setActiveModal] = useState<'none' | 'login' | 'signup' | 'orders' | 'favorites' | 'cart' | 'location'>('none');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const [deliveryAddress, setDeliveryAddress] = useState("Bandaragama, Western Province, Sri Lanka");
+
+  const navigate = useNavigate();
 
   const openLogin = () => setActiveModal('login');
   const openSignUp = () => setActiveModal('signup');
@@ -53,6 +56,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/admin" element={<AdminPanel />} />
+          <Route path="/shop-admin" element={<ShopPanel />} />
         </Routes>
         
         <Footer />
@@ -64,13 +68,15 @@ function App() {
           onAddressChange={setDeliveryAddress}
         />
 
-<Sidebar 
+        <Sidebar 
           isOpen={isSidebarOpen} 
           onClose={() => setIsSidebarOpen(false)}
           onOpenOrders={openOrders}
           onOpenFavorites={openFavorites}
-          // 1. Sidebar එකේ Error එක නැති කරන්න මේ පේළිය දැම්මා
-          onOpenAdminPanel={() => setIsSidebarOpen(false)} 
+          onOpenAdminPanel={() => {
+            setIsSidebarOpen(false);
+            navigate('/admin');      
+          }} 
         />
 
         <OrdersModal 
@@ -95,7 +101,6 @@ function App() {
           onSwitchToLogin={openLogin} 
         />
 
-        {/* 2. LocationModal එකේ Error එක මඟහරින්න @ts-ignore දැම්මා */}
         {/* @ts-ignore */}
         <LocationModal 
           isOpen={activeModal === 'location'} 
