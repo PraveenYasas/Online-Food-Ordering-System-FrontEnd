@@ -14,6 +14,7 @@ import Profile from './components/profile/profile';
 import LocationModal from './components/location/LocationModal';
 import { CartProvider } from './components/cart/CartContext';
 import AdminPanel from './components/admin/AdminPanel';
+import ShopPanel from './components/shop/ShopPanel';
 
 function App() {
   const [activeModal, setActiveModal] = useState<'none' | 'login' | 'signup' | 'orders' | 'favorites' | 'cart' | 'location'>('none');
@@ -55,6 +56,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/admin" element={<AdminPanel />} />
+          <Route path="/shop-admin" element={<ShopPanel />} />
         </Routes>
         
         <Footer />
