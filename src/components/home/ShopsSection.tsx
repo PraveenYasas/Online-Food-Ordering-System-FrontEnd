@@ -53,8 +53,8 @@ function ShopsSection({ selectedShop, onSelectShop }: ShopsSectionProps) {
 
   return (
     <div className="relative w-full py-4 bg-white">
-      <div className="px-14 mb-6 flex justify-between items-end">
-        <h2 className="text-[26px] font-black text-gray-900 tracking-tight">Featured Restaurants</h2>
+      <div className="px-14 mb-2 flex justify-between items-end">
+        <h2 className="text-2xl font-bold text-gray-900">Featured Restaurants</h2>
       </div>
 
       <button 
@@ -68,7 +68,7 @@ function ShopsSection({ selectedShop, onSelectShop }: ShopsSectionProps) {
 
       <div 
         ref={scrollRef} 
-        className={`flex gap-6 overflow-x-auto px-14 pb-8 select-none [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
+        className={`flex gap-6 overflow-x-auto px-14 pt-4 pb-8 select-none [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
         onMouseDown={startDrag} 
         onMouseLeave={stopDrag} 
         onMouseUp={stopDrag} 
@@ -81,9 +81,9 @@ function ShopsSection({ selectedShop, onSelectShop }: ShopsSectionProps) {
           <div 
             key={index} 
             onClick={() => onSelectShop(shop.name)}
-            className={`w-260px shrink-0 flex flex-col bg-white rounded-2xl overflow-hidden transition-all duration-300 group ${
+            className={`w-260px shrink-0 flex flex-col bg-white rounded-2xl overflow-hidden transition-all duration-300 group cursor-pointer ${
               selectedShop === shop.name 
-                ? 'border-2 border-[#34A853] shadow-md ring-2 ring-[#34A853]/20 scale-[1.02]' 
+                ? 'ring-2 ring-[#34A853] border border-transparent shadow-md scale-[1.02]' 
                 : 'border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_25px_rgba(0,0,0,0.08)] hover:-translate-y-1'
             }`}
           >
@@ -97,18 +97,15 @@ function ShopsSection({ selectedShop, onSelectShop }: ShopsSectionProps) {
               </div>
             ) : (
               <>
-                {/* Modern Image Banner */}
                 <div className="relative h-32 w-full overflow-hidden">
                   <img src={shop.image} alt={shop.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 pointer-events-none" />
                   
-                  {/* Delivery Time Badge */}
                   <div className="absolute bottom-3 right-3 bg-white/95 backdrop-blur-sm px-2.5 py-1 rounded-full text-[11px] font-bold text-gray-800 shadow-sm flex items-center gap-1">
                     <svg className="w-3 h-3 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                     {shop.time}
                   </div>
                 </div>
 
-                {/* Shop Details */}
                 <div className="p-4 bg-white relative">
                   <div className="flex justify-between items-start mb-1">
                     <h3 className="font-bold text-[17px] text-gray-900 leading-tight truncate pr-2">{shop.name}</h3>
