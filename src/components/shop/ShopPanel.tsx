@@ -4,12 +4,47 @@ import { Link } from 'react-router-dom';
 export default function ShopPanel() {
   const [activeTab, setActiveTab] = useState<'dashboard' | 'orders' | 'menu'>('orders');
   const [isFoodModalOpen, setIsFoodModalOpen] = useState(false);
+  const [isAcceptSuccessOpen, setIsAcceptSuccessOpen] = useState(false);
+
+  const [pendingOrders, setPendingOrders] = useState([
+    {
+      id: '#ORD-8821',
+      time: '2 mins ago',
+      customer: 'Praveen Yasas',
+      type: 'Delivery',
+      items: [
+        { qty: 2, name: 'Cheese Burger', price: 1700 },
+        { qty: 1, name: 'Coca Cola', price: 400 }
+      ],
+      total: '2,100.00'
+    },
+    {
+      id: '#ORD-8822',
+      time: '5 mins ago',
+      customer: 'Kamal Perera',
+      type: 'Pickup',
+      items: [
+        { qty: 1, name: 'Spicy Chicken Burger', price: 1200 },
+        { qty: 2, name: 'French Fries', price: 900 }
+      ],
+      total: '2,100.00'
+    }
+  ]);
+
+  const handleAcceptOrder = (orderId: string) => {
+    setPendingOrders(pendingOrders.filter(order => order.id !== orderId));
+    setIsAcceptSuccessOpen(true);
+  };
+
+  const handleRejectOrder = (orderId: string) => {
+    setPendingOrders(pendingOrders.filter(order => order.id !== orderId));
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
       
       {/* Shop Owner Sidebar */}
-      <aside className="w-64 bg-white border-r border-gray-200 flex flex-col md:flex">
+      <aside className="w-64 bg-white border-r border-gray-200 flex flex-col md:flex shrink-0">
         <div className="h-16 flex items-center px-6 border-b border-gray-100">
           <Link to="/" className="text-2xl font-bold tracking-tight cursor-pointer text-black hover:opacity-90 transition-opacity">
             Bite<span className="text-[#05C167]">Dash</span> 
@@ -31,7 +66,9 @@ export default function ShopPanel() {
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
             Live Orders
-            <span className="ml-auto bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">3</span>
+            {pendingOrders.length > 0 && (
+              <span className="ml-auto bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">{pendingOrders.length}</span>
+            )}
           </button>
           <button 
             onClick={() => setActiveTab('menu')}
@@ -45,7 +82,7 @@ export default function ShopPanel() {
 
       {/* Main Content */}
       <main className="flex-1 overflow-y-auto relative">
-        <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-8">
+        <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-8 sticky top-0 z-10">
           <h2 className="text-xl font-bold text-gray-800 capitalize">
             {activeTab === 'dashboard' ? 'C Foods - Dashboard' : activeTab === 'orders' ? 'Incoming Orders' : 'Menu Management'}
           </h2>
@@ -78,25 +115,91 @@ export default function ShopPanel() {
             </div>
           )}
 
-          {/* 2. LIVE ORDERS */}
+          {/* 2. LIVE ORDERS (Modern UI Update) */}
           {activeTab === 'orders' && (
-            <div className="grid grid-cols-1 gap-4">
-               {/* Order Card */}
-               <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm flex flex-col md:flex-row gap-4 justify-between md:items-center">
-                  <div>
-                     <div className="flex items-center gap-3 mb-2">
-                        <span className="bg-yellow-100 text-yellow-700 font-bold px-3 py-1 rounded-md text-xs uppercase tracking-wide">New Order</span>
-                        <span className="font-bold text-gray-900">#ORD-8821</span>
-                        <span className="text-sm text-gray-500">2 mins ago</span>
-                     </div>
-                     <p className="font-medium text-gray-800">2x Cheese Burger, 1x Coca Cola</p>
-                     <p className="text-sm text-gray-500 mt-1">Total: <span className="font-bold text-gray-900">LKR 2,100.00</span></p>
+            <div className="max-w-4xl">
+              {pendingOrders.length === 0 ? (
+                <div className="bg-white border border-gray-200 rounded-2xl p-12 text-center flex flex-col items-center justify-center shadow-sm">
+                  <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mb-4">
+                    <svg className="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" /></svg>
                   </div>
-                  <div className="flex gap-2">
-                     <button className="bg-[#34A853] hover:bg-[#2b8f45] text-white px-6 py-2 rounded-lg font-bold transition-colors">Accept & Prepare</button>
-                     <button className="bg-red-50 hover:bg-red-100 text-red-600 px-4 py-2 rounded-lg font-bold transition-colors">Reject</button>
-                  </div>
-               </div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-1">All Caught Up!</h3>
+                  <p className="text-gray-500">There are no pending orders at the moment. Take a breather.</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 gap-6">
+                  {pendingOrders.map((order) => (
+                    <div key={order.id} className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow">
+                        
+                        {/* Card Header */}
+                        <div className="flex flex-wrap items-center justify-between border-b border-gray-100 pb-4 mb-4 gap-4">
+                          <div className="flex items-center gap-3">
+                              <span className="bg-yellow-50 text-yellow-700 font-bold px-3 py-1 rounded-lg text-xs uppercase tracking-wider flex items-center gap-1.5">
+                                <div className="w-1.5 h-1.5 bg-yellow-500 rounded-full animate-pulse"></div>
+                                New Order
+                              </span>
+                              <h3 className="text-xl font-black text-gray-900">{order.id}</h3>
+                              <span className="text-sm font-medium text-gray-500">{order.time}</span>
+                          </div>
+                          <div className="flex items-center gap-2 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-200">
+                             <span className="text-sm font-bold text-gray-700">{order.type}</span>
+                          </div>
+                        </div>
+
+                        {/* Card Body - Items & Details */}
+                        <div className="flex flex-col md:flex-row gap-6 mb-6">
+                          {/* Order Items */}
+                          <div className="flex-1 bg-gray-50 rounded-xl p-4 border border-gray-100">
+                            <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Order Items</h4>
+                            <ul className="space-y-2">
+                              {order.items.map((item, index) => (
+                                <li key={index} className="flex justify-between items-center text-sm">
+                                  <div className="flex items-center gap-2">
+                                    <span className="font-bold text-gray-900 bg-white border border-gray-200 w-6 h-6 flex items-center justify-center rounded text-xs">{item.qty}x</span>
+                                    <span className="font-medium text-gray-700">{item.name}</span>
+                                  </div>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                          
+                          {/* Customer Info & Total */}
+                          <div className="w-full md:w-64 flex flex-col justify-between">
+                            <div>
+                               <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Customer</h4>
+                               <p className="font-semibold text-gray-800 flex items-center gap-2">
+                                 <div className="w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-xs">{order.customer.charAt(0)}</div>
+                                 {order.customer}
+                               </p>
+                            </div>
+                            <div className="mt-4 pt-4 border-t border-gray-100">
+                              <p className="text-sm text-gray-500 font-medium">Total Amount</p>
+                              <p className="text-2xl font-black text-[#34A853]">LKR {order.total}</p>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Card Footer - Actions */}
+                        <div className="flex gap-3 justify-end">
+                          <button 
+                            onClick={() => handleRejectOrder(order.id)}
+                            className="px-6 py-2.5 rounded-xl font-bold text-red-600 hover:bg-red-50 border border-transparent hover:border-red-100 transition-all"
+                          >
+                            Reject Order
+                          </button>
+                          <button 
+                            onClick={() => handleAcceptOrder(order.id)}
+                            className="bg-[#34A853] hover:bg-[#2b8f45] text-white px-8 py-2.5 rounded-xl font-bold flex items-center gap-2 transition-all shadow-sm shadow-green-200"
+                          >
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg>
+                            Accept & Prepare
+                          </button>
+                        </div>
+
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
 
@@ -111,7 +214,6 @@ export default function ShopPanel() {
                 </button>
               </div>
               <div className="p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                 {/* Sample Food Item */}
                  <div className="border border-gray-200 rounded-xl p-4 flex flex-col items-center text-center relative group">
                     <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                        <button className="bg-white shadow p-1.5 rounded-lg text-blue-600 hover:bg-blue-50"><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg></button>
@@ -131,42 +233,109 @@ export default function ShopPanel() {
 
         </div>
 
-        {/* Add Food Modal (For Shop Owner) */}
+        {/* --- ADD FOOD MODAL --- */}
         {isFoodModalOpen && (
           <div className="fixed inset-0 z-200 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-            <div className="bg-white w-full max-w-lg rounded-2xl overflow-hidden shadow-2xl flex flex-col">
-              <div className="bg-[#34A853] p-5 text-white flex justify-between items-center">
-                <h2 className="text-xl font-bold">Add Food Item</h2>
-                <button onClick={() => setIsFoodModalOpen(false)} className="p-1 hover:bg-white/20 rounded-full">
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+            <div className="bg-white w-full max-w-2xl rounded-2xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
+              <div className="bg-[#34A853] p-5 text-white flex justify-between items-center shrink-0">
+                <div>
+                  <h2 className="text-xl font-bold">Add New Food Item</h2>
+                  <p className="text-white/80 text-xs mt-1">Fill in the details to add this item to your menu</p>
+                </div>
+                <button onClick={() => setIsFoodModalOpen(false)} className="p-1 hover:bg-white/20 rounded-full transition-colors">
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
                 </button>
               </div>
-              <div className="p-6">
-                <form className="flex flex-col gap-4">
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-800 mb-1.5">Food Name</label>
-                    <input type="text" placeholder="e.g. Cheese Burger" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-[#34A853] focus:ring-1 focus:ring-[#34A853] outline-none" />
+              <div className="p-6 overflow-y-auto no-scrollbar">
+                <form className="flex flex-col gap-5">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-800 mb-1.5">Food Name</label>
+                      <input type="text" placeholder="e.g. Spicy Chicken Burger" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-[#34A853] focus:ring-1 focus:ring-[#34A853] outline-none" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-800 mb-1.5">Food Category</label>
+                      <select className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-[#34A853] focus:ring-1 focus:ring-[#34A853] outline-none bg-white">
+                        <option value="">Select a category</option>
+                        <option value="Grocery">Grocery</option>
+                        <option value="Soup">Soup</option>
+                        <option value="Chinese">Chinese</option>
+                        <option value="Burgers">Burgers</option>
+                        <option value="Desserts">Desserts</option>
+                        <option value="BBQ">BBQ</option>
+                        <option value="Korean">Korean</option>
+                        <option value="Bakery">Bakery</option>
+                        <option value="Indian">Indian</option>
+                        <option value="Asian">Asian</option>
+                        <option value="Salads">Salads</option>
+                        <option value="Smoothies">Smoothies</option>
+                        <option value="Coffee">Coffee</option>
+                        <option value="American">American</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-800 mb-1.5">Price (LKR)</label>
+                      <input type="number" placeholder="e.g. 1200.00" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-[#34A853] focus:ring-1 focus:ring-[#34A853] outline-none" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-800 mb-1.5">Item Status</label>
+                      <select className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-[#34A853] focus:ring-1 focus:ring-[#34A853] outline-none bg-white">
+                        <option value="Available">Available</option>
+                        <option value="Out of Stock">Out of Stock</option>
+                      </select>
+                    </div>
                   </div>
                   <div>
-                     <label className="block text-sm font-semibold text-gray-800 mb-1.5">Price (LKR)</label>
-                     <input type="number" placeholder="0.00" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-[#34A853] focus:ring-1 focus:ring-[#34A853] outline-none" />
+                    <label className="block text-sm font-semibold text-gray-800 mb-1.5">Description (Optional)</label>
+                    <textarea rows={2} placeholder="Brief description about the food (ingredients, portion size...)" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-[#34A853] focus:ring-1 focus:ring-[#34A853] outline-none resize-none"></textarea>
                   </div>
                   <div>
                     <label className="block text-sm font-semibold text-gray-800 mb-1.5">Upload Food Image</label>
-                    <div className="border-2 border-dashed border-gray-300 rounded-xl p-6 flex flex-col items-center justify-center text-gray-500 hover:border-[#34A853] hover:bg-[#f0f9f2] transition-colors cursor-pointer">
-                      <svg className="w-8 h-8 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
-                      <span className="text-sm font-medium">Click to upload image</span>
+                    <div className="border-2 border-dashed border-gray-300 rounded-xl p-6 flex flex-col items-center justify-center text-gray-500 hover:border-[#34A853] hover:bg-[#f0f9f2] transition-colors cursor-pointer group">
+                      <svg className="w-8 h-8 mb-2 text-gray-400 group-hover:text-[#34A853] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                      </svg>
+                      <span className="text-sm font-medium text-gray-700 group-hover:text-[#34A853] transition-colors">Click to upload food image</span>
+                      <span className="text-xs text-gray-400 mt-1">Recommended size: 800x800px (PNG, JPG)</span>
                     </div>
                   </div>
-                  <div className="mt-4 flex gap-3">
-                    <button type="button" onClick={() => setIsFoodModalOpen(false)} className="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg font-semibold text-gray-700 hover:bg-gray-50">Cancel</button>
-                    <button type="button" className="flex-1 bg-[#34A853] text-white px-4 py-2.5 rounded-lg font-bold hover:bg-[#2b8f45]">Save Food</button>
+                  <div className="mt-2 flex gap-3 pt-4 border-t border-gray-100">
+                    <button type="button" onClick={() => setIsFoodModalOpen(false)} className="flex-1 px-4 py-3 border border-gray-300 rounded-lg font-semibold text-gray-700 hover:bg-gray-50 transition-colors">Cancel</button>
+                    <button type="button" className="flex-1 bg-[#34A853] text-white px-4 py-3 rounded-lg font-bold hover:bg-[#2b8f45] transition-colors">Save Food Item</button>
                   </div>
                 </form>
               </div>
             </div>
           </div>
         )}
+
+        {/* --- ORDER ACCEPT SUCCESS MODAL --- */}
+        {isAcceptSuccessOpen && (
+          <div className="fixed inset-0 z-200 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+            <div className="bg-white w-full max-w-sm rounded-24px p-8 text-center shadow-2xl">
+              <div className="w-20 h-20 bg-[#e6f4ea] rounded-full flex items-center justify-center mx-auto mb-5">
+                <svg className="w-10 h-10 text-[#34A853]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">Order Accepted!</h2>
+              <p className="text-gray-500 mb-8 text-sm">
+                The customer has been notified that you are preparing their food.
+              </p>
+              <button 
+                onClick={() => setIsAcceptSuccessOpen(false)}
+                className="w-full bg-[#34A853] text-white font-bold py-3.5 rounded-xl hover:bg-[#2b8f45] transition-colors shadow-sm shadow-green-200"
+              >
+                Continue Managing
+              </button>
+            </div>
+          </div>
+        )}
+
       </main>
     </div>
   );
