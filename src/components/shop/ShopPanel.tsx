@@ -4,6 +4,9 @@ import { Link } from 'react-router-dom';
 export default function ShopPanel() {
   const [activeTab, setActiveTab] = useState<'dashboard' | 'orders' | 'menu'>('orders');
   const [isFoodModalOpen, setIsFoodModalOpen] = useState(false);
+  
+  // 1. අලුතින් Order Success Modal එකට State එකක් දැම්මා
+  const [isAcceptSuccessOpen, setIsAcceptSuccessOpen] = useState(false);
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
@@ -92,7 +95,13 @@ export default function ShopPanel() {
                      <p className="text-sm text-gray-500 mt-1">Total: <span className="font-bold text-gray-900">LKR 2,100.00</span></p>
                   </div>
                   <div className="flex gap-2">
-                     <button className="bg-[#34A853] hover:bg-[#2b8f45] text-white px-6 py-2 rounded-lg font-bold transition-colors">Accept & Prepare</button>
+                     {/* 2. Button එක එබුවම Modal එක ඕපන් වෙන්න onClick එක දැම්මා */}
+                     <button 
+                        onClick={() => setIsAcceptSuccessOpen(true)}
+                        className="bg-[#34A853] hover:bg-[#2b8f45] text-white px-6 py-2 rounded-lg font-bold transition-colors"
+                     >
+                        Accept & Prepare
+                     </button>
                      <button className="bg-red-50 hover:bg-red-100 text-red-600 px-4 py-2 rounded-lg font-bold transition-colors">Reject</button>
                   </div>
                </div>
@@ -129,12 +138,10 @@ export default function ShopPanel() {
 
         </div>
 
-        {/* --- PROFESSIONAL ADD FOOD MODAL --- */}
+        {/* --- ADD FOOD MODAL --- */}
         {isFoodModalOpen && (
           <div className="fixed inset-0 z-200 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
             <div className="bg-white w-full max-w-2xl rounded-2xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
-              
-              {/* Header */}
               <div className="bg-[#34A853] p-5 text-white flex justify-between items-center shrink-0">
                 <div>
                   <h2 className="text-xl font-bold">Add New Food Item</h2>
@@ -146,12 +153,8 @@ export default function ShopPanel() {
                   </svg>
                 </button>
               </div>
-
-              {/* Form Area */}
               <div className="p-6 overflow-y-auto no-scrollbar">
                 <form className="flex flex-col gap-5">
-                  
-                  {/* Basic Info (2 Columns) */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-semibold text-gray-800 mb-1.5">Food Name</label>
@@ -178,8 +181,6 @@ export default function ShopPanel() {
                       </select>
                     </div>
                   </div>
-
-                  {/* Pricing and Status (2 Columns) */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-semibold text-gray-800 mb-1.5">Price (LKR)</label>
@@ -193,18 +194,10 @@ export default function ShopPanel() {
                       </select>
                     </div>
                   </div>
-
-                  {/* Description */}
                   <div>
                     <label className="block text-sm font-semibold text-gray-800 mb-1.5">Description (Optional)</label>
-                    <textarea 
-                      rows={2} 
-                      placeholder="Brief description about the food (ingredients, portion size...)" 
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-[#34A853] focus:ring-1 focus:ring-[#34A853] outline-none resize-none"
-                    ></textarea>
+                    <textarea rows={2} placeholder="Brief description about the food (ingredients, portion size...)" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-[#34A853] focus:ring-1 focus:ring-[#34A853] outline-none resize-none"></textarea>
                   </div>
-
-                  {/* Image Upload Area */}
                   <div>
                     <label className="block text-sm font-semibold text-gray-800 mb-1.5">Upload Food Image</label>
                     <div className="border-2 border-dashed border-gray-300 rounded-xl p-6 flex flex-col items-center justify-center text-gray-500 hover:border-[#34A853] hover:bg-[#f0f9f2] transition-colors cursor-pointer group">
@@ -215,18 +208,39 @@ export default function ShopPanel() {
                       <span className="text-xs text-gray-400 mt-1">Recommended size: 800x800px (PNG, JPG)</span>
                     </div>
                   </div>
-
-                  {/* Buttons */}
                   <div className="mt-2 flex gap-3 pt-4 border-t border-gray-100">
                     <button type="button" onClick={() => setIsFoodModalOpen(false)} className="flex-1 px-4 py-3 border border-gray-300 rounded-lg font-semibold text-gray-700 hover:bg-gray-50 transition-colors">Cancel</button>
                     <button type="button" className="flex-1 bg-[#34A853] text-white px-4 py-3 rounded-lg font-bold hover:bg-[#2b8f45] transition-colors">Save Food Item</button>
                   </div>
-                  
                 </form>
               </div>
             </div>
           </div>
         )}
+
+        {/* --- 3. අලුතින් හදපු ORDER ACCEPT SUCCESS MODAL එක --- */}
+        {isAcceptSuccessOpen && (
+          <div className="fixed inset-0 z-200 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+            <div className="bg-white w-full max-w-sm rounded-24px p-8 text-center shadow-2xl">
+              <div className="w-20 h-20 bg-[#e6f4ea] rounded-full flex items-center justify-center mx-auto mb-5">
+                <svg className="w-10 h-10 text-[#34A853]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">Order Accepted!</h2>
+              <p className="text-gray-500 mb-8 text-sm">
+                The customer has been notified that you are preparing their food.
+              </p>
+              <button 
+                onClick={() => setIsAcceptSuccessOpen(false)}
+                className="w-full bg-[#34A853] text-white font-bold py-3.5 rounded-xl hover:bg-[#2b8f45] transition-colors"
+              >
+                Continue Managing
+              </button>
+            </div>
+          </div>
+        )}
+
       </main>
     </div>
   );
