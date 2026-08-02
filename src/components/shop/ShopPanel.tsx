@@ -81,7 +81,6 @@ export default function ShopPanel() {
           {/* 2. LIVE ORDERS */}
           {activeTab === 'orders' && (
             <div className="grid grid-cols-1 gap-4">
-               {/* Order Card */}
                <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm flex flex-col md:flex-row gap-4 justify-between md:items-center">
                   <div>
                      <div className="flex items-center gap-3 mb-2">
@@ -111,7 +110,6 @@ export default function ShopPanel() {
                 </button>
               </div>
               <div className="p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                 {/* Sample Food Item */}
                  <div className="border border-gray-200 rounded-xl p-4 flex flex-col items-center text-center relative group">
                     <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                        <button className="bg-white shadow p-1.5 rounded-lg text-blue-600 hover:bg-blue-50"><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg></button>
@@ -131,37 +129,99 @@ export default function ShopPanel() {
 
         </div>
 
-        {/* Add Food Modal (For Shop Owner) */}
+        {/* --- PROFESSIONAL ADD FOOD MODAL --- */}
         {isFoodModalOpen && (
           <div className="fixed inset-0 z-200 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-            <div className="bg-white w-full max-w-lg rounded-2xl overflow-hidden shadow-2xl flex flex-col">
-              <div className="bg-[#34A853] p-5 text-white flex justify-between items-center">
-                <h2 className="text-xl font-bold">Add Food Item</h2>
-                <button onClick={() => setIsFoodModalOpen(false)} className="p-1 hover:bg-white/20 rounded-full">
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+            <div className="bg-white w-full max-w-2xl rounded-2xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
+              
+              {/* Header */}
+              <div className="bg-[#34A853] p-5 text-white flex justify-between items-center shrink-0">
+                <div>
+                  <h2 className="text-xl font-bold">Add New Food Item</h2>
+                  <p className="text-white/80 text-xs mt-1">Fill in the details to add this item to your menu</p>
+                </div>
+                <button onClick={() => setIsFoodModalOpen(false)} className="p-1 hover:bg-white/20 rounded-full transition-colors">
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
                 </button>
               </div>
-              <div className="p-6">
-                <form className="flex flex-col gap-4">
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-800 mb-1.5">Food Name</label>
-                    <input type="text" placeholder="e.g. Cheese Burger" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-[#34A853] focus:ring-1 focus:ring-[#34A853] outline-none" />
-                  </div>
-                  <div>
-                     <label className="block text-sm font-semibold text-gray-800 mb-1.5">Price (LKR)</label>
-                     <input type="number" placeholder="0.00" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-[#34A853] focus:ring-1 focus:ring-[#34A853] outline-none" />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-800 mb-1.5">Upload Food Image</label>
-                    <div className="border-2 border-dashed border-gray-300 rounded-xl p-6 flex flex-col items-center justify-center text-gray-500 hover:border-[#34A853] hover:bg-[#f0f9f2] transition-colors cursor-pointer">
-                      <svg className="w-8 h-8 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
-                      <span className="text-sm font-medium">Click to upload image</span>
+
+              {/* Form Area */}
+              <div className="p-6 overflow-y-auto no-scrollbar">
+                <form className="flex flex-col gap-5">
+                  
+                  {/* Basic Info (2 Columns) */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-800 mb-1.5">Food Name</label>
+                      <input type="text" placeholder="e.g. Spicy Chicken Burger" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-[#34A853] focus:ring-1 focus:ring-[#34A853] outline-none" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-800 mb-1.5">Food Category</label>
+                      <select className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-[#34A853] focus:ring-1 focus:ring-[#34A853] outline-none bg-white">
+                        <option value="">Select a category</option>
+                        <option value="Grocery">Grocery</option>
+                        <option value="Soup">Soup</option>
+                        <option value="Chinese">Chinese</option>
+                        <option value="Burgers">Burgers</option>
+                        <option value="Desserts">Desserts</option>
+                        <option value="BBQ">BBQ</option>
+                        <option value="Korean">Korean</option>
+                        <option value="Bakery">Bakery</option>
+                        <option value="Indian">Indian</option>
+                        <option value="Asian">Asian</option>
+                        <option value="Salads">Salads</option>
+                        <option value="Smoothies">Smoothies</option>
+                        <option value="Coffee">Coffee</option>
+                        <option value="American">American</option>
+                      </select>
                     </div>
                   </div>
-                  <div className="mt-4 flex gap-3">
-                    <button type="button" onClick={() => setIsFoodModalOpen(false)} className="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg font-semibold text-gray-700 hover:bg-gray-50">Cancel</button>
-                    <button type="button" className="flex-1 bg-[#34A853] text-white px-4 py-2.5 rounded-lg font-bold hover:bg-[#2b8f45]">Save Food</button>
+
+                  {/* Pricing and Status (2 Columns) */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-800 mb-1.5">Price (LKR)</label>
+                      <input type="number" placeholder="e.g. 1200.00" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-[#34A853] focus:ring-1 focus:ring-[#34A853] outline-none" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-800 mb-1.5">Item Status</label>
+                      <select className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-[#34A853] focus:ring-1 focus:ring-[#34A853] outline-none bg-white">
+                        <option value="Available">Available</option>
+                        <option value="Out of Stock">Out of Stock</option>
+                      </select>
+                    </div>
                   </div>
+
+                  {/* Description */}
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-800 mb-1.5">Description (Optional)</label>
+                    <textarea 
+                      rows={2} 
+                      placeholder="Brief description about the food (ingredients, portion size...)" 
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-[#34A853] focus:ring-1 focus:ring-[#34A853] outline-none resize-none"
+                    ></textarea>
+                  </div>
+
+                  {/* Image Upload Area */}
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-800 mb-1.5">Upload Food Image</label>
+                    <div className="border-2 border-dashed border-gray-300 rounded-xl p-6 flex flex-col items-center justify-center text-gray-500 hover:border-[#34A853] hover:bg-[#f0f9f2] transition-colors cursor-pointer group">
+                      <svg className="w-8 h-8 mb-2 text-gray-400 group-hover:text-[#34A853] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                      </svg>
+                      <span className="text-sm font-medium text-gray-700 group-hover:text-[#34A853] transition-colors">Click to upload food image</span>
+                      <span className="text-xs text-gray-400 mt-1">Recommended size: 800x800px (PNG, JPG)</span>
+                    </div>
+                  </div>
+
+                  {/* Buttons */}
+                  <div className="mt-2 flex gap-3 pt-4 border-t border-gray-100">
+                    <button type="button" onClick={() => setIsFoodModalOpen(false)} className="flex-1 px-4 py-3 border border-gray-300 rounded-lg font-semibold text-gray-700 hover:bg-gray-50 transition-colors">Cancel</button>
+                    <button type="button" className="flex-1 bg-[#34A853] text-white px-4 py-3 rounded-lg font-bold hover:bg-[#2b8f45] transition-colors">Save Food Item</button>
+                  </div>
+                  
                 </form>
               </div>
             </div>
