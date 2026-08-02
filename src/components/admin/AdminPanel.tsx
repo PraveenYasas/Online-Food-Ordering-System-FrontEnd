@@ -3,8 +3,7 @@ import { Link } from 'react-router-dom';
 
 export default function AdminPanel() {
   const [activeTab, setActiveTab] = useState<'dashboard' | 'stores' | 'users'>('dashboard');
-  
-  const [ isStoreModalOpen, setIsStoreModalOpen] = useState(false);
+  const [isStoreModalOpen, setIsStoreModalOpen] = useState(false);
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
@@ -56,7 +55,7 @@ export default function AdminPanel() {
 
         <div className="p-8">
           
-          {/* 1. DASHBOARD TAB */}
+          {/* DASHBOARD TAB */}
           {activeTab === 'dashboard' && (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-4">
@@ -89,7 +88,7 @@ export default function AdminPanel() {
             </div>
           )}
 
-          {/* 2. STORES MANAGEMENT TAB */}
+          {/* STORES MANAGEMENT TAB */}
           {activeTab === 'stores' && (
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
               <div className="p-6 border-b border-gray-100 flex justify-between items-center">
@@ -130,7 +129,7 @@ export default function AdminPanel() {
             </div>
           )}
 
-          {/* 3. USER MANAGEMENT TAB */}
+          {/* USER MANAGEMENT TAB */}
           {activeTab === 'users' && (
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
               <div className="p-6 border-b border-gray-100 flex justify-between items-center">
@@ -184,41 +183,99 @@ export default function AdminPanel() {
 
         </div>
 
-        {/* --- අලුතින් ඇඩ් කරපු Approve Store Modal එක --- */}
+        {/* --- PROFESSIONAL APPROVE STORE MODAL --- */}
         {isStoreModalOpen && (
           <div className="fixed inset-0 z-200 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-            <div className="bg-white w-full max-w-lg rounded-2xl overflow-hidden shadow-2xl flex flex-col">
-              <div className="bg-black p-5 text-white flex justify-between items-center">
-                <h2 className="text-xl font-bold">Approve New Store</h2>
+            {/* Modal Container: wider (max-w-2xl) and scrollable (max-h-[90vh]) */}
+            <div className="bg-white w-full max-w-2xl rounded-2xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
+              
+              {/* Header */}
+              <div className="bg-black p-5 text-white flex justify-between items-center shrink-0">
+                <div>
+                  <h2 className="text-xl font-bold">Approve & Register New Store</h2>
+                  <p className="text-gray-300 text-xs mt-1">Fill in the details to onboard a new vendor</p>
+                </div>
                 <button onClick={() => setIsStoreModalOpen(false)} className="p-1 hover:bg-white/20 rounded-full transition-colors">
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                   </svg>
                 </button>
               </div>
-              <div className="p-6">
-                <form className="flex flex-col gap-4">
+
+              {/* Scrollable Form Area */}
+              <div className="p-6 overflow-y-auto no-scrollbar">
+                <form className="flex flex-col gap-5">
+                  
+                  {/* Basic Info (2 Columns) */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-800 mb-1.5">Store Name</label>
+                      <input type="text" placeholder="e.g. C Foods" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-black focus:ring-1 focus:ring-black outline-none" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-800 mb-1.5">Store Category</label>
+                      <select className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-black focus:ring-1 focus:ring-black outline-none bg-white">
+                        <option>Sri Lankan</option>
+                        <option>Chinese</option>
+                        <option>Fast Food</option>
+                        <option>Desserts & Beverages</option>
+                        <option>Grocery</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* Owner Info (2 Columns) */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-800 mb-1.5">Owner Name</label>
+                      <input type="text" placeholder="e.g. Kamal Perera" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-black focus:ring-1 focus:ring-black outline-none" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-800 mb-1.5">Owner Email (Login ID)</label>
+                      <input type="email" placeholder="e.g. owner@cfoods.com" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-black focus:ring-1 focus:ring-black outline-none" />
+                    </div>
+                  </div>
+
+                  {/* Contact & Legal (2 Columns) */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-800 mb-1.5">Contact Number</label>
+                      <input type="tel" placeholder="e.g. 077 123 4567" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-black focus:ring-1 focus:ring-black outline-none" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-800 mb-1.5">Business Reg No. (Optional)</label>
+                      <input type="text" placeholder="e.g. PV 123456" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-black focus:ring-1 focus:ring-black outline-none" />
+                    </div>
+                  </div>
+
+                  {/* Address Area */}
                   <div>
-                    <label className="block text-sm font-semibold text-gray-800 mb-1.5">Store Name</label>
-                    <input type="text" placeholder="e.g. C Foods" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-black focus:ring-1 focus:ring-black outline-none" />
+                    <label className="block text-sm font-semibold text-gray-800 mb-1.5">Store Address / Location</label>
+                    <textarea 
+                      rows={2} 
+                      placeholder="e.g. 123, Main Street, Colombo 04" 
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-black focus:ring-1 focus:ring-black outline-none resize-none"
+                    ></textarea>
                   </div>
+
+                  {/* Image Upload Area */}
                   <div>
-                    <label className="block text-sm font-semibold text-gray-800 mb-1.5">Owner Email</label>
-                    <input type="email" placeholder="e.g. owner@cfoods.com" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-black focus:ring-1 focus:ring-black outline-none" />
+                    <label className="block text-sm font-semibold text-gray-800 mb-1.5">Store Cover Image (Food/Items related)</label>
+                    <div className="border-2 border-dashed border-gray-300 rounded-xl p-6 flex flex-col items-center justify-center text-gray-500 hover:border-black hover:bg-gray-50 transition-colors cursor-pointer group">
+                      <svg className="w-8 h-8 mb-2 text-gray-400 group-hover:text-black transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                      </svg>
+                      <span className="text-sm font-medium text-gray-700 group-hover:text-black transition-colors">Click to upload or drag & drop</span>
+                      <span className="text-xs text-gray-400 mt-1">PNG, JPG, WEBP up to 5MB</span>
+                    </div>
                   </div>
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-800 mb-1.5">Store Category</label>
-                    <select className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-black focus:ring-1 focus:ring-black outline-none bg-white">
-                      <option>Sri Lankan</option>
-                      <option>Chinese</option>
-                      <option>Fast Food</option>
-                      <option>Beverages</option>
-                    </select>
+
+                  {/* Buttons */}
+                  <div className="mt-2 flex gap-3 pt-4 border-t border-gray-100">
+                    <button type="button" onClick={() => setIsStoreModalOpen(false)} className="flex-1 px-4 py-3 border border-gray-300 rounded-lg font-semibold text-gray-700 hover:bg-gray-50 transition-colors">Cancel</button>
+                    <button type="button" className="flex-1 bg-black text-white px-4 py-3 rounded-lg font-bold hover:bg-gray-800 transition-colors">Approve & Register Store</button>
                   </div>
-                  <div className="mt-4 flex gap-3">
-                    <button type="button" onClick={() => setIsStoreModalOpen(false)} className="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg font-semibold text-gray-700 hover:bg-gray-50 transition-colors">Cancel</button>
-                    <button type="button" className="flex-1 bg-black text-white px-4 py-2.5 rounded-lg font-bold hover:bg-gray-800 transition-colors">Approve Store</button>
-                  </div>
+                  
                 </form>
               </div>
             </div>
