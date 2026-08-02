@@ -6,7 +6,6 @@ export default function ShopPanel() {
   const [isFoodModalOpen, setIsFoodModalOpen] = useState(false);
   const [isAcceptSuccessOpen, setIsAcceptSuccessOpen] = useState(false);
 
-  // 1. Orders ටික මැනේජ් කරන්න State එකක් හැදුවා
   const [pendingOrders, setPendingOrders] = useState([
     {
       id: '#ORD-8821',
@@ -32,13 +31,11 @@ export default function ShopPanel() {
     }
   ]);
 
-  // Order එක Accept කරාම List එකෙන් අයින් කරන Function එක
   const handleAcceptOrder = (orderId: string) => {
     setPendingOrders(pendingOrders.filter(order => order.id !== orderId));
     setIsAcceptSuccessOpen(true);
   };
 
-  // Order එක Reject කරාම List එකෙන් අයින් කරන Function එක
   const handleRejectOrder = (orderId: string) => {
     setPendingOrders(pendingOrders.filter(order => order.id !== orderId));
   };
