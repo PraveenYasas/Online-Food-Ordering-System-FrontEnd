@@ -2,39 +2,50 @@ import { useCart } from '../cart/CartContext';
 
 interface FoodItemsSectionProps {
   selectedCategory: string;
+  selectedShop: string;
 }
 
 const dummyFoods = [
-  { id: 1, name: 'Classic Cheese Burger', price: 850.00, image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=800&q=80', category: 'Burgers' },
-  { id: 2, name: 'Spicy Chicken Fried Rice', price: 1200.00, image: 'https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?auto=format&fit=crop&w=800&q=80', category: 'Asian' },
-  { id: 3, name: 'Hot Garlic Noodles', price: 950.00, image: 'https://images.unsplash.com/photo-1585032226651-759b368d7246?auto=format&fit=crop&w=800&q=80', category: 'Chinese' },
-  { id: 4, name: 'Dark Chocolate Cake', price: 650.00, image: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80', category: 'Desserts' },
-  { id: 5, name: 'Seafood Paella', price: 1899.00, image: 'https://images.unsplash.com/photo-1534080564583-6be75777b70a?auto=format&fit=crop&w=800&q=80', category: 'Asian' },
-  { id: 6, name: 'Premium Grilled Steak', price: 2450.00, image: 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=80', category: 'American' },
-  { id: 7, name: 'Fresh Garden Salad', price: 750.00, image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=800&q=80', category: 'Salads' },
-  { id: 8, name: 'Cappuccino Coffee', price: 550.00, image: 'https://images.unsplash.com/photo-1497935586351-b67a49e012bf?auto=format&fit=crop&w=800&q=80', category: 'Coffee' },
+  { id: 1, name: 'Classic Cheese Burger', price: 850.00, image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=800&q=80', category: 'Burgers', shop: 'Burger Hub' },
+  { id: 2, name: 'Spicy Chicken Fried Rice', price: 1200.00, image: 'https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?auto=format&fit=crop&w=800&q=80', category: 'Asian', shop: 'Asian Wok' },
+  { id: 3, name: 'Hot Garlic Noodles', price: 950.00, image: 'https://images.unsplash.com/photo-1585032226651-759b368d7246?auto=format&fit=crop&w=800&q=80', category: 'Chinese', shop: 'Asian Wok' },
+  { id: 4, name: 'Dark Chocolate Cake', price: 650.00, image: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80', category: 'Desserts', shop: 'Sweet Tooth' },
+  { id: 5, name: 'Seafood Paella', price: 1899.00, image: 'https://images.unsplash.com/photo-1534080564583-6be75777b70a?auto=format&fit=crop&w=800&q=80', category: 'Asian', shop: 'C Foods' },
+  { id: 6, name: 'Premium Grilled Steak', price: 2450.00, image: 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=80', category: 'American', shop: 'C Foods' },
+  { id: 7, name: 'Fresh Garden Salad', price: 750.00, image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=800&q=80', category: 'Salads', shop: 'C Foods' },
+  { id: 8, name: 'Cappuccino Coffee', price: 550.00, image: 'https://images.unsplash.com/photo-1497935586351-b67a49e012bf?auto=format&fit=crop&w=800&q=80', category: 'Coffee', shop: 'Sweet Tooth' },
+  { id: 9, name: 'Double Cheese Pizza', price: 2200.00, image: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=800&q=80', category: 'American', shop: 'Pizza Express' },
+  { id: 10, name: 'BBQ Chicken Wings', price: 1100.00, image: 'https://images.unsplash.com/photo-1524114664604-cd8133cd67ad?auto=format&fit=crop&w=800&q=80', category: 'BBQ', shop: 'Burger Hub' },
 ];
 
-function FoodItemsSection({ selectedCategory }: FoodItemsSectionProps) {
+function FoodItemsSection({ selectedCategory, selectedShop }: FoodItemsSectionProps) {
   const { addToCart } = useCart();
 
-  const filteredFoods = selectedCategory === 'All' 
-    ? dummyFoods 
-    : dummyFoods.filter(food => food.category === selectedCategory);
+  const filteredFoods = dummyFoods.filter(food => {
+    const matchCategory = selectedCategory === 'All' || food.category === selectedCategory;
+    const matchShop = selectedShop === 'All Shops' || food.shop === selectedShop;
+    return matchCategory && matchShop;
+  });
 
   return (
     <div className="w-full py-10 px-6 sm:px-12 bg-gray-50">
       <div className="flex justify-between items-center mb-8">
         <h2 className="text-2xl font-bold text-gray-900">
-          {selectedCategory === 'All' ? 'Popular Dishes' : `${selectedCategory} Dishes`}
+          {selectedShop === 'All Shops' 
+            ? (selectedCategory === 'All' ? 'Popular Dishes' : `${selectedCategory} Dishes`)
+            : `Menu at ${selectedShop}`}
         </h2>
       </div>
       
       {filteredFoods.length === 0 ? (
-        <div className="text-center py-16 bg-white rounded-2xl border border-gray-100">
-          <span className="text-5xl mb-4 block">🍽️</span>
+        <div className="text-center py-16 bg-white rounded-2xl border border-gray-100 shadow-sm">
+          <span className="text-5xl mb-4 block opacity-50">🍽️</span>
           <h3 className="text-lg font-bold text-gray-900">No items found</h3>
-          <p className="text-gray-500 mt-2">We couldn't find any dishes for "{selectedCategory}".</p>
+          <p className="text-gray-500 mt-2">
+            {selectedShop !== 'All Shops' 
+              ? `There are no ${selectedCategory !== 'All' ? selectedCategory : ''} items available at ${selectedShop} right now.`
+              : `We couldn't find any dishes for "${selectedCategory}".`}
+          </p>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
@@ -48,11 +59,18 @@ function FoodItemsSection({ selectedCategory }: FoodItemsSectionProps) {
                 </div>
               </div>
               
-              {/* Food Details & Button */}
               <div className="p-5 flex flex-col flex-1">
-                <span className="text-[11px] font-bold tracking-wider text-[#34A853] uppercase mb-1">
-                  {food.category}
-                </span>
+                <div className="flex justify-between items-center mb-1.5">
+                   <span className="text-[11px] font-bold tracking-wider text-[#34A853] uppercase">
+                     {food.category}
+                   </span>
+                   {selectedShop === 'All Shops' && (
+                     <span className="text-[10px] font-bold text-gray-500 bg-gray-100 px-2 py-0.5 rounded-md truncate max-w-100px">
+                       {food.shop}
+                     </span>
+                   )}
+                </div>
+
                 <h3 className="font-bold text-lg text-gray-900 leading-tight mb-1">{food.name}</h3>
                 <p className="text-gray-500 text-sm mb-4 line-clamp-2">Freshly prepared and delivered hot to your doorstep.</p>
                 
