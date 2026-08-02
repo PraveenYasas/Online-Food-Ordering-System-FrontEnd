@@ -33,7 +33,6 @@ export default function AdminPanel() {
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
             Registered Stores
           </button>
-          {/* 2. අලුත් Users Tab Button එක */}
           <button 
             onClick={() => setActiveTab('users')}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-colors ${activeTab === 'users' ? 'bg-[#e6f4ea] text-[#137333]' : 'text-gray-600 hover:bg-gray-50'}`}
@@ -131,7 +130,7 @@ export default function AdminPanel() {
             </div>
           )}
 
-          {/* 3. USER MANAGEMENT TAB (අලුතින් දාපු එක) */}
+          {/* 3. USER MANAGEMENT TAB */}
           {activeTab === 'users' && (
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
               <div className="p-6 border-b border-gray-100 flex justify-between items-center">
@@ -153,7 +152,6 @@ export default function AdminPanel() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100">
-                    {/* User 1 */}
                     <tr className="hover:bg-gray-50 transition-colors">
                       <td className="py-4 px-6">
                         <p className="font-bold text-gray-900 text-sm">Praveen Yasas</p>
@@ -166,7 +164,6 @@ export default function AdminPanel() {
                         <button className="text-red-500 font-medium text-sm hover:underline">Block</button>
                       </td>
                     </tr>
-                    {/* User 2 */}
                     <tr className="hover:bg-gray-50 transition-colors">
                       <td className="py-4 px-6">
                         <p className="font-bold text-gray-900 text-sm">Kamal Perera</p>
@@ -187,6 +184,47 @@ export default function AdminPanel() {
 
         </div>
 
+        {/* --- අලුතින් ඇඩ් කරපු Approve Store Modal එක --- */}
+        {isStoreModalOpen && (
+          <div className="fixed inset-0 z-200 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+            <div className="bg-white w-full max-w-lg rounded-2xl overflow-hidden shadow-2xl flex flex-col">
+              <div className="bg-black p-5 text-white flex justify-between items-center">
+                <h2 className="text-xl font-bold">Approve New Store</h2>
+                <button onClick={() => setIsStoreModalOpen(false)} className="p-1 hover:bg-white/20 rounded-full transition-colors">
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              <div className="p-6">
+                <form className="flex flex-col gap-4">
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-800 mb-1.5">Store Name</label>
+                    <input type="text" placeholder="e.g. C Foods" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-black focus:ring-1 focus:ring-black outline-none" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-800 mb-1.5">Owner Email</label>
+                    <input type="email" placeholder="e.g. owner@cfoods.com" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-black focus:ring-1 focus:ring-black outline-none" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-800 mb-1.5">Store Category</label>
+                    <select className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-black focus:ring-1 focus:ring-black outline-none bg-white">
+                      <option>Sri Lankan</option>
+                      <option>Chinese</option>
+                      <option>Fast Food</option>
+                      <option>Beverages</option>
+                    </select>
+                  </div>
+                  <div className="mt-4 flex gap-3">
+                    <button type="button" onClick={() => setIsStoreModalOpen(false)} className="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg font-semibold text-gray-700 hover:bg-gray-50 transition-colors">Cancel</button>
+                    <button type="button" className="flex-1 bg-black text-white px-4 py-2.5 rounded-lg font-bold hover:bg-gray-800 transition-colors">Approve Store</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        )}
+        
       </main>
     </div>
   );
