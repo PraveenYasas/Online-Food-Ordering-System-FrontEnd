@@ -28,14 +28,14 @@ function LoginModal({ isOpen, onClose, onSwitchToSignUp }: LoginModalProps) {
       const token = response.data.token;
       const role = response.data.role; // Backend should return the user's role upon successful login
 
-      // LocalStorage එකේ සේව් කරනවා
+      // Save in LocalStorage for future requests
       localStorage.setItem("token", token); 
       localStorage.setItem("role", role);
 
-      // If the Role is ADMIN or SHOP_OWNER, redirect to the respective dashboard, otherwise reload the page
+      // If the Role is ADMIN or RESTURANT_OWNER, redirect to the respective dashboard, otherwise reload the page
       if (role === 'ADMIN') {
         window.location.href = '/admin';
-      } else if (role === 'SHOP_OWNER') {
+      } else if (role === 'RESTURANT_OWNER') {
         window.location.href = '/shop-admin';
       } else {
         window.location.reload(); 
