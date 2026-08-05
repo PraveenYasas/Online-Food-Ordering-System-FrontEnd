@@ -1,7 +1,17 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 export default function ShopPanel() {
+
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('role');
+    navigate('/');
+    window.location.reload();
+  };
+
   const [activeTab, setActiveTab] = useState<'dashboard' | 'orders' | 'menu'>('orders');
   const [isFoodModalOpen, setIsFoodModalOpen] = useState(false);
   const [isAcceptSuccessOpen, setIsAcceptSuccessOpen] = useState(false);
@@ -46,7 +56,7 @@ export default function ShopPanel() {
       {/* Shop Owner Sidebar */}
       <aside className="w-64 bg-white border-r border-gray-200 flex flex-col md:flex shrink-0">
         <div className="h-16 flex items-center px-6 border-b border-gray-100">
-          <Link to="/" className="text-2xl font-bold tracking-tight cursor-pointer text-black hover:opacity-90 transition-opacity">
+          <Link to="/shop-admin" onClick={() => setActiveTab('dashboard')} className="text-2xl font-bold tracking-tight cursor-pointer text-black hover:opacity-90 transition-opacity">
             Bite<span className="text-[#05C167]">Dash</span> 
             <span className="text-xs font-bold text-white bg-blue-600 px-2 py-0.5 rounded ml-2">SHOP</span>
           </Link>
@@ -92,6 +102,13 @@ export default function ShopPanel() {
                 Store Open
              </span>
              <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center font-bold text-blue-600">C</div>
+             <button 
+               onClick={handleLogout}
+               className="bg-red-50 hover:bg-red-100 text-red-600 px-4 py-2 rounded-xl text-sm font-bold transition-colors flex items-center gap-2"
+             >
+               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+               Logout
+             </button>
           </div>
         </header>
 
