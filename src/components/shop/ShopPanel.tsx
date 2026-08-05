@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 export default function ShopPanel() {
@@ -15,6 +15,69 @@ export default function ShopPanel() {
   const [activeTab, setActiveTab] = useState<'dashboard' | 'orders' | 'menu'>('orders');
   const [isFoodModalOpen, setIsFoodModalOpen] = useState(false);
   const [isAcceptSuccessOpen, setIsAcceptSuccessOpen] = useState(false);
+
+  const [foodName, setFoodName] = useState('');
+  const [categoryId, setCategoryId] = useState('');
+  const [price, setPrice] = useState('');
+  const [description, setDescription] = useState('');
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [categories, setCategories] = useState<any[]>([]);
+
+  useEffect(() => {
+    fetch('http://localhost:8080/categories')
+      .then(res => res.json())
+      .then(data => setCategories(data))
+      .catch(err => console.error("Error fetching categories:", err));
+  }, []);
+
+  const handleSaveFood = async (e: React.FormEvent) => {
+    e.preventDefault(); 
+
+    if (!imageFile || !foodName || !price || !categoryId) {
+      alert("Please fill in all fields with valid information and image!");
+      return;
+    }
+
+    try {
+      const formData = new FormData();
+      formData.append('file', imageFile);
+
+      const imageRes = await fetch('http://localhost:8080/images/upload', {
+        method: 'POST',
+        body: formData
+      });
+
+      if (!imageRes.ok) throw new Error("Image upload failed");
+      
+      const imageUrl = await imageRes.text();
+
+      const foodData = {
+        name: foodName,
+        categoryId: Number(categoryId),
+        price: parseFloat(price),
+        description: description,
+        imageUrl: imageUrl 
+      };
+
+      const foodRes = await fetch('http://localhost:8080/food-items', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(foodData)
+      });
+
+      if (foodRes.ok) {
+        alert("Food item saved successfully!");
+        setIsFoodModalOpen(false);
+        setFoodName(''); setCategoryId(''); setPrice(''); setDescription(''); setImageFile(null);
+      } else {
+        alert("Something went wrong! Please try again.");
+      }
+
+    } catch (error) {
+      console.error("Error saving food:", error);
+      alert("Error connecting to the server!");
+    }
+  };
 
   const [pendingOrders, setPendingOrders] = useState([
     {
@@ -132,7 +195,7 @@ export default function ShopPanel() {
             </div>
           )}
 
-          {/* 2. LIVE ORDERS (Modern UI Update) */}
+          {/* 2. LIVE ORDERS */}
           {activeTab === 'orders' && (
             <div className="max-w-4xl">
               {pendingOrders.length === 0 ? (
@@ -147,8 +210,6 @@ export default function ShopPanel() {
                 <div className="grid grid-cols-1 gap-6">
                   {pendingOrders.map((order) => (
                     <div key={order.id} className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow">
-                        
-                        {/* Card Header */}
                         <div className="flex flex-wrap items-center justify-between border-b border-gray-100 pb-4 mb-4 gap-4">
                           <div className="flex items-center gap-3">
                               <span className="bg-yellow-50 text-yellow-700 font-bold px-3 py-1 rounded-lg text-xs uppercase tracking-wider flex items-center gap-1.5">
@@ -163,9 +224,7 @@ export default function ShopPanel() {
                           </div>
                         </div>
 
-                        {/* Card Body - Items & Details */}
                         <div className="flex flex-col md:flex-row gap-6 mb-6">
-                          {/* Order Items */}
                           <div className="flex-1 bg-gray-50 rounded-xl p-4 border border-gray-100">
                             <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Order Items</h4>
                             <ul className="space-y-2">
@@ -180,7 +239,6 @@ export default function ShopPanel() {
                             </ul>
                           </div>
                           
-                          {/* Customer Info & Total */}
                           <div className="w-full md:w-64 flex flex-col justify-between">
                             <div>
                                <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Customer</h4>
@@ -196,23 +254,13 @@ export default function ShopPanel() {
                           </div>
                         </div>
 
-                        {/* Card Footer - Actions */}
                         <div className="flex gap-3 justify-end">
-                          <button 
-                            onClick={() => handleRejectOrder(order.id)}
-                            className="px-6 py-2.5 rounded-xl font-bold text-red-600 hover:bg-red-50 border border-transparent hover:border-red-100 transition-all"
-                          >
-                            Reject Order
-                          </button>
-                          <button 
-                            onClick={() => handleAcceptOrder(order.id)}
-                            className="bg-[#34A853] hover:bg-[#2b8f45] text-white px-8 py-2.5 rounded-xl font-bold flex items-center gap-2 transition-all shadow-sm shadow-green-200"
-                          >
+                          <button onClick={() => handleRejectOrder(order.id)} className="px-6 py-2.5 rounded-xl font-bold text-red-600 hover:bg-red-50 border border-transparent hover:border-red-100 transition-all">Reject Order</button>
+                          <button onClick={() => handleAcceptOrder(order.id)} className="bg-[#34A853] hover:bg-[#2b8f45] text-white px-8 py-2.5 rounded-xl font-bold flex items-center gap-2 transition-all shadow-sm shadow-green-200">
                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg>
                             Accept & Prepare
                           </button>
                         </div>
-
                     </div>
                   ))}
                 </div>
@@ -260,43 +308,53 @@ export default function ShopPanel() {
                   <p className="text-white/80 text-xs mt-1">Fill in the details to add this item to your menu</p>
                 </div>
                 <button onClick={() => setIsFoodModalOpen(false)} className="p-1 hover:bg-white/20 rounded-full transition-colors">
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
                 </button>
               </div>
               <div className="p-6 overflow-y-auto no-scrollbar">
-                <form className="flex flex-col gap-5">
+                
+                <form className="flex flex-col gap-5" onSubmit={handleSaveFood}>
+                  
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-semibold text-gray-800 mb-1.5">Food Name</label>
-                      <input type="text" placeholder="e.g. Spicy Chicken Burger" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-[#34A853] focus:ring-1 focus:ring-[#34A853] outline-none" />
+                      <input 
+                        type="text" 
+                        value={foodName}
+                        onChange={(e) => setFoodName(e.target.value)}
+                        placeholder="e.g. Spicy Chicken Burger" 
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-[#34A853] focus:ring-1 focus:ring-[#34A853] outline-none" 
+                        required 
+                      />
                     </div>
                     <div>
                       <label className="block text-sm font-semibold text-gray-800 mb-1.5">Food Category</label>
-                      <select className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-[#34A853] focus:ring-1 focus:ring-[#34A853] outline-none bg-white">
+                      <select 
+                        value={categoryId}
+                        onChange={(e) => setCategoryId(e.target.value)}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-[#34A853] focus:ring-1 focus:ring-[#34A853] outline-none bg-white"
+                        required
+                      >
                         <option value="">Select a category</option>
-                        <option value="Grocery">Grocery</option>
-                        <option value="Soup">Soup</option>
-                        <option value="Chinese">Chinese</option>
-                        <option value="Burgers">Burgers</option>
-                        <option value="Desserts">Desserts</option>
-                        <option value="BBQ">BBQ</option>
-                        <option value="Korean">Korean</option>
-                        <option value="Bakery">Bakery</option>
-                        <option value="Indian">Indian</option>
-                        <option value="Asian">Asian</option>
-                        <option value="Salads">Salads</option>
-                        <option value="Smoothies">Smoothies</option>
-                        <option value="Coffee">Coffee</option>
-                        <option value="American">American</option>
+                        {categories.map((cat) => (
+                          <option key={cat.id} value={cat.id}>{cat.name}</option>
+                        ))}
                       </select>
                     </div>
                   </div>
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-semibold text-gray-800 mb-1.5">Price (LKR)</label>
-                      <input type="number" placeholder="e.g. 1200.00" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-[#34A853] focus:ring-1 focus:ring-[#34A853] outline-none" />
+                      <input 
+                        type="number" 
+                        value={price}
+                        onChange={(e) => setPrice(e.target.value)}
+                        placeholder="e.g. 1200.00" 
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-[#34A853] focus:ring-1 focus:ring-[#34A853] outline-none" 
+                        required 
+                      />
                     </div>
                     <div>
                       <label className="block text-sm font-semibold text-gray-800 mb-1.5">Item Status</label>
@@ -306,24 +364,58 @@ export default function ShopPanel() {
                       </select>
                     </div>
                   </div>
+
                   <div>
                     <label className="block text-sm font-semibold text-gray-800 mb-1.5">Description (Optional)</label>
-                    <textarea rows={2} placeholder="Brief description about the food (ingredients, portion size...)" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-[#34A853] focus:ring-1 focus:ring-[#34A853] outline-none resize-none"></textarea>
+                    <textarea 
+                      rows={2} 
+                      value={description}
+                      onChange={(e) => setDescription(e.target.value)}
+                      placeholder="Brief description about the food (ingredients, portion size...)" 
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-[#34A853] focus:ring-1 focus:ring-[#34A853] outline-none resize-none"
+                    ></textarea>
                   </div>
+
+                  {/* 🔥 Image File Input එක 🔥 */}
                   <div>
                     <label className="block text-sm font-semibold text-gray-800 mb-1.5">Upload Food Image</label>
-                    <div className="border-2 border-dashed border-gray-300 rounded-xl p-6 flex flex-col items-center justify-center text-gray-500 hover:border-[#34A853] hover:bg-[#f0f9f2] transition-colors cursor-pointer group">
-                      <svg className="w-8 h-8 mb-2 text-gray-400 group-hover:text-[#34A853] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-                      </svg>
-                      <span className="text-sm font-medium text-gray-700 group-hover:text-[#34A853] transition-colors">Click to upload food image</span>
-                      <span className="text-xs text-gray-400 mt-1">Recommended size: 800x800px (PNG, JPG)</span>
-                    </div>
+                    <input 
+                      type="file" 
+                      id="foodImage" 
+                      accept="image/*" 
+                      className="hidden" 
+                      onChange={(e) => {
+                        if (e.target.files && e.target.files[0]) {
+                          setImageFile(e.target.files[0]);
+                        }
+                      }}
+                    />
+                    <label 
+                      htmlFor="foodImage" 
+                      className="border-2 border-dashed border-gray-300 rounded-xl p-6 flex flex-col items-center justify-center text-gray-500 hover:border-[#34A853] hover:bg-[#f0f9f2] transition-colors cursor-pointer group"
+                    >
+                      {imageFile ? (
+                        <>
+                           <svg className="w-8 h-8 mb-2 text-[#34A853]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                           <span className="text-sm font-bold text-[#34A853]">{imageFile.name}</span>
+                        </>
+                      ) : (
+                        <>
+                          <svg className="w-8 h-8 mb-2 text-gray-400 group-hover:text-[#34A853] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                          </svg>
+                          <span className="text-sm font-medium text-gray-700 group-hover:text-[#34A853] transition-colors">Click to upload food image</span>
+                          <span className="text-xs text-gray-400 mt-1">Recommended size: 800x800px (PNG, JPG)</span>
+                        </>
+                      )}
+                    </label>
                   </div>
+
                   <div className="mt-2 flex gap-3 pt-4 border-t border-gray-100">
                     <button type="button" onClick={() => setIsFoodModalOpen(false)} className="flex-1 px-4 py-3 border border-gray-300 rounded-lg font-semibold text-gray-700 hover:bg-gray-50 transition-colors">Cancel</button>
-                    <button type="button" className="flex-1 bg-[#34A853] text-white px-4 py-3 rounded-lg font-bold hover:bg-[#2b8f45] transition-colors">Save Food Item</button>
+                    <button type="submit" className="flex-1 bg-[#34A853] text-white px-4 py-3 rounded-lg font-bold hover:bg-[#2b8f45] transition-colors">Save Food Item</button>
                   </div>
+
                 </form>
               </div>
             </div>
