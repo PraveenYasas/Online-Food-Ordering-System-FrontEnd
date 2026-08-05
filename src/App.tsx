@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Routes, Route, useNavigate } from 'react-router-dom';
+import { Routes, Route, useNavigate, Navigate } from 'react-router-dom'; // Navigate අලුතින් ගත්තා
 
 import Navbar from './components/layout/Navbar';
 import Home from './components/home/Home';
@@ -19,10 +19,15 @@ import ShopPanel from './components/shop/ShopPanel';
 function App() {
   const [activeModal, setActiveModal] = useState<'none' | 'login' | 'signup' | 'orders' | 'favorites' | 'cart' | 'location'>('none');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
   const [deliveryAddress, setDeliveryAddress] = useState("Bandaragama, Western Province, Sri Lanka");
 
   const navigate = useNavigate();
+
+  // 1. In localStorage, check the user's role to determine if they are an Admin, Restaurant Owner, or a regular Customer
+  const role = localStorage.getItem('role');
+
+  // 2. Determine if the customer layout should be shown based on their role
+  const showCustomerLayout = role !== 'ADMIN' && role !== 'RESTURANT_OWNER';
 
   const openLogin = () => setActiveModal('login');
   const openSignUp = () => setActiveModal('signup');
@@ -44,23 +49,47 @@ function App() {
     <CartProvider>
       <div className="min-h-screen bg-white font-sans">
         
-        <Navbar 
-          onOpenLogin={openLogin} 
-          onOpenSignUp={openSignUp} 
-          onOpenSidebar={() => setIsSidebarOpen(true)}
-          onOpenCart={openCart}
-          onOpenLocation={openLocation}
-        />
+        {/* Only show Navbar for Customers, not for Admin or Shop Owner */}
+        {showCustomerLayout && (
+          <Navbar 
+            onOpenLogin={openLogin} 
+            onOpenSignUp={openSignUp} 
+            onOpenSidebar={() => setIsSidebarOpen(true)}
+            onOpenCart={openCart}
+            onOpenLocation={openLocation}
+          />
+        )}
         
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/admin" element={<AdminPanel />} />
-          <Route path="/shop-admin" element={<ShopPanel />} />
+          {/* Re direct to the appropriate page based on the user's role */}
+          <Route path="/" element={
+            role === 'ADMIN' ? <Navigate to="/admin" replace /> :
+            role === 'RESTURANT_OWNER' ? <Navigate to="/shop-admin" replace /> :
+            <Home />
+          } />
+
+          {/* protect the Profile Page based on the user's role */}
+          <Route path="/profile" element={
+            role === 'ADMIN' ? <Navigate to="/admin" replace /> :
+            role === 'RESTURANT_OWNER' ? <Navigate to="/shop-admin" replace /> :
+            <Profile />
+          } />
+
+          {/* Admin Panel can be accessed by Admins only */}
+          <Route path="/admin" element={
+            role === 'ADMIN' ? <AdminPanel /> : <Navigate to="/" replace />
+          } />
+
+          {/* Shop Panel can be accessed by Restaurant Owners only */}
+          <Route path="/shop-admin" element={
+            role === 'RESTURANT_OWNER' ? <ShopPanel /> : <Navigate to="/" replace />
+          } />
         </Routes>
         
-        <Footer />
+        {/* only show Footer for Customers, not for Admin or Shop Owner */}
+        {showCustomerLayout && <Footer />}
 
+        {/* can't see the Cart Drawer for Admin or Shop Owner */}
         <CartDrawer 
           isOpen={activeModal === 'cart'} 
           onClose={closeModal} 
