@@ -27,7 +27,7 @@ function App() {
   const role = localStorage.getItem('role');
 
   // 2. Determine if the customer layout should be shown based on their role
-  const showCustomerLayout = role !== 'ADMIN' && role !== 'RESTAURANT_OWNER';
+  const showCustomerLayout = role !== 'ADMIN' && role !== 'RESTURANT_OWNER';
 
   const openLogin = () => setActiveModal('login');
   const openSignUp = () => setActiveModal('signup');
@@ -64,14 +64,14 @@ function App() {
           {/* Re direct to the appropriate page based on the user's role */}
           <Route path="/" element={
             role === 'ADMIN' ? <Navigate to="/admin" replace /> :
-            role === 'RESTAURANT_OWNER' ? <Navigate to="/shop-admin" replace /> :
+            role === 'RESTURANT_OWNER' ? <Navigate to="/shop-admin" replace /> :
             <Home />
           } />
 
           {/* protect the Profile Page based on the user's role */}
           <Route path="/profile" element={
             role === 'ADMIN' ? <Navigate to="/admin" replace /> :
-            role === 'RESTAURANT_OWNER' ? <Navigate to="/shop-admin" replace /> :
+            role === 'RESTURANT_OWNER' ? <Navigate to="/shop-admin" replace /> :
             <Profile />
           } />
 
@@ -82,7 +82,7 @@ function App() {
 
           {/* Shop Panel can be accessed by Restaurant Owners only */}
           <Route path="/shop-admin" element={
-            role === 'RESTAURANT_OWNER' ? <ShopPanel /> : <Navigate to="/" replace />
+            role === 'RESTURANT_OWNER' ? <ShopPanel /> : <Navigate to="/" replace />
           } />
         </Routes>
         
