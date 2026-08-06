@@ -24,7 +24,7 @@ export default function ShopPanel() {
   const [categories, setCategories] = useState<any[]>([]);
 
   useEffect(() => {
-    fetch('http://localhost:8080/categories')
+    fetch('http://localhost:8080/api/v1/categories')
       .then(res => res.json())
       .then(data => setCategories(data))
       .catch(err => console.error("Error fetching categories:", err));
@@ -42,7 +42,7 @@ export default function ShopPanel() {
       const formData = new FormData();
       formData.append('file', imageFile);
 
-      const imageRes = await fetch('http://localhost:8080/images/upload', {
+      const imageRes = await fetch('http://localhost:8080/api/v1/images/upload', {
         method: 'POST',
         body: formData
       });
@@ -59,7 +59,7 @@ export default function ShopPanel() {
         imageUrl: imageUrl 
       };
 
-      const foodRes = await fetch('http://localhost:8080/food-items', {
+      const foodRes = await fetch('http://localhost:8080/api/v1/food-items', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(foodData)

@@ -38,7 +38,7 @@ function CategorySection({ selectedCategory, onSelectCategory }: CategorySection
   const [scrollLeft, setScrollLeft] = useState(0);
 
   useEffect(() => {
-    fetch('http://localhost:8080/categories')
+    fetch('http://localhost:8080/api/v1/categories')
       .then(res => res.json())
       .then(data => {
         const allCategory = { id: 0, name: 'All' };

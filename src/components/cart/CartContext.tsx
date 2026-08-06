@@ -5,6 +5,7 @@ export interface CartItem {
     name: string;
     price: number;
     quantity: number;
+    image: string;
 }
 
 interface CartContextType {
@@ -24,7 +25,6 @@ export function CartProvider({ children }: { children: ReactNode }) {
         setCartItems((prevItems) => {
             const existingItem = prevItems.find(item => item.id === newItem.id);
             if (existingItem) {
-                // කලින් දාපු එකක් නම් quantity එක වැඩි කරනවා
                 return prevItems.map(item =>
                     item.id === newItem.id ? { ...item, quantity: item.quantity + 1 } : item
                 );
