@@ -1,33 +1,51 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 
 interface CategorySectionProps {
   selectedCategory: string;
   onSelectCategory: (category: string) => void;
 }
 
-const categories = [
-  { name: 'All', icon: '🍽️', bgColor: 'bg-gray-100' },
-  { name: 'Grocery', icon: '🍌', bgColor: 'bg-orange-50' },
-  { name: 'Soup', icon: '🍜', bgColor: 'bg-red-50' },
-  { name: 'Chinese', icon: '🥡', bgColor: 'bg-gray-100' },
-  { name: 'Burgers', icon: '🍔', bgColor: 'bg-orange-100' },
-  { name: 'Desserts', icon: '🍰', bgColor: 'bg-pink-50' },
-  { name: 'BBQ', icon: '🍗', bgColor: 'bg-orange-50' },
-  { name: 'Korean', icon: '🍱', bgColor: 'bg-blue-50' },
-  { name: 'Bakery', icon: '🥐', bgColor: 'bg-yellow-50' },
-  { name: 'Indian', icon: '🍛', bgColor: 'bg-orange-50' },
-  { name: 'Asian', icon: '🍙', bgColor: 'bg-green-50' },
-  { name: 'Salads', icon: '🥗', bgColor: 'bg-green-100' },
-  { name: 'Smoothies', icon: '🥤', bgColor: 'bg-blue-50' },
-  { name: 'Coffee', icon: '☕', bgColor: 'bg-stone-100' },
-  { name: 'American', icon: '🌭', bgColor: 'bg-red-50' },
-];
+interface CategoryDTO {
+  id: number;
+  name: string;
+  description?: string;
+}
+
+const categoryStyles: Record<string, { icon: string, bgColor: string }> = {
+  'All': { icon: '🍽️', bgColor: 'bg-gray-100' },
+  'Grocery': { icon: '🍌', bgColor: 'bg-orange-50' },
+  'Soup': { icon: '🍜', bgColor: 'bg-red-50' },
+  'Chinese': { icon: '🥡', bgColor: 'bg-gray-100' },
+  'Burgers': { icon: '🍔', bgColor: 'bg-orange-100' },
+  'Desserts': { icon: '🍰', bgColor: 'bg-pink-50' },
+  'BBQ': { icon: '🍗', bgColor: 'bg-orange-50' },
+  'Korean': { icon: '🍱', bgColor: 'bg-blue-50' },
+  'Bakery': { icon: '🥐', bgColor: 'bg-yellow-50' },
+  'Indian': { icon: '🍛', bgColor: 'bg-orange-50' },
+  'Asian': { icon: '🍙', bgColor: 'bg-green-50' },
+  'Salads': { icon: '🥗', bgColor: 'bg-green-100' },
+  'Smoothies': { icon: '🥤', bgColor: 'bg-blue-50' },
+  'Coffee': { icon: '☕', bgColor: 'bg-stone-100' },
+  'American': { icon: '🌭', bgColor: 'bg-red-50' },
+};
 
 function CategorySection({ selectedCategory, onSelectCategory }: CategorySectionProps) {
+  const [categories, setCategories] = useState<CategoryDTO[]>([]);
+
   const scrollRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
+
+  useEffect(() => {
+    fetch('http://localhost:8080/categories')
+      .then(res => res.json())
+      .then(data => {
+        const allCategory = { id: 0, name: 'All' };
+        setCategories([allCategory, ...data]);
+      })
+      .catch(err => console.error("Error fetching categories:", err));
+  }, []);
 
   const scroll = (direction: 'left' | 'right') => {
     if (scrollRef.current) {
@@ -83,21 +101,24 @@ function CategorySection({ selectedCategory, onSelectCategory }: CategorySection
         onTouchEnd={stopDrag} 
         onTouchMove={onDrag}
       >
-        {categories.map((cat, index) => (
-          <div 
-            key={index} 
-            onClick={() => onSelectCategory(cat.name)}
-            className="flex flex-col items-center gap-3 min-w-17.5 cursor-pointer"
-          >
-            <div className={`w-18.75 h-18.75 rounded-full ${cat.bgColor} flex items-center justify-center text-4xl transition-all duration-200 pointer-events-none ${selectedCategory === cat.name ? 'ring-4 ring-[#34A853] ring-offset-2 scale-105' : 'hover:scale-105'}`}>
-              {cat.icon}
+        {categories.map((cat) => {
+          const style = categoryStyles[cat.name] || { icon: '🍽️', bgColor: 'bg-gray-100' };
+
+          return (
+            <div 
+              key={cat.id} 
+              onClick={() => onSelectCategory(cat.name)}
+              className="flex flex-col items-center gap-3 min-w-17.5 cursor-pointer"
+            >
+              <div className={`w-18.75 h-18.75 rounded-full ${style.bgColor} flex items-center justify-center text-4xl transition-all duration-200 pointer-events-none ${selectedCategory === cat.name ? 'ring-4 ring-[#34A853] ring-offset-2 scale-105' : 'hover:scale-105'}`}>
+                {style.icon}
+              </div>
+              <span className={`text-[15px] pointer-events-none transition-colors ${selectedCategory === cat.name ? 'font-bold text-[#34A853]' : 'font-semibold text-gray-800'}`}>
+                {cat.name}
+              </span>
             </div>
-            {/* Title */}
-            <span className={`text-[15px] pointer-events-none transition-colors ${selectedCategory === cat.name ? 'font-bold text-[#34A853]' : 'font-semibold text-gray-800'}`}>
-              {cat.name}
-            </span>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       <button 
