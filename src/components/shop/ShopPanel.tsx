@@ -23,12 +23,18 @@ export default function ShopPanel() {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [categories, setCategories] = useState<any[]>([]);
 
+  const token = localStorage.getItem('token'); 
+
   useEffect(() => {
-    fetch('http://localhost:8080/api/v1/categories')
+    fetch('http://localhost:8080/api/v1/categories', {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
       .then(res => res.json())
       .then(data => setCategories(data))
       .catch(err => console.error("Error fetching categories:", err));
-  }, []);
+  }, [token]);
 
   const handleSaveFood = async (e: React.FormEvent) => {
     e.preventDefault(); 
@@ -44,6 +50,9 @@ export default function ShopPanel() {
 
       const imageRes = await fetch('http://localhost:8080/api/v1/images/upload', {
         method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}` 
+        },
         body: formData
       });
 
@@ -61,7 +70,10 @@ export default function ShopPanel() {
 
       const foodRes = await fetch('http://localhost:8080/api/v1/food-items', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify(foodData)
       });
 
