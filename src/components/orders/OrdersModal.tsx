@@ -39,8 +39,7 @@ function OrdersModal({ isOpen, onClose }: OrdersModalProps) {
   const fetchMyOrders = async () => {
     setLoading(true);
     const token = localStorage.getItem('token');
-    
-    const userId = 4; 
+    const userId = 4;
 
     try {
       const response = await fetch(`http://localhost:8080/api/v1/orders/user/${userId}`, {
@@ -64,6 +63,31 @@ function OrdersModal({ isOpen, onClose }: OrdersModalProps) {
     }
   };
 
+  const handleCancelOrder = async (orderId: number) => {
+    const confirmCancel = window.confirm("Are you sure you want to cancel this order?");
+    if (!confirmCancel) return;
+
+    const token = localStorage.getItem('token');
+    
+    try {
+      const response = await fetch(`http://localhost:8080/api/v1/orders/${orderId}/status?status=Cancelled`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (response.ok) {
+        fetchMyOrders();
+      } else {
+        alert("Failed to cancel the order. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error cancelling order:", error);
+      alert("Server error while cancelling order.");
+    }
+  };
+
   const formatDate = (dateString: string) => {
     const options: Intl.DateTimeFormatOptions = { 
       year: 'numeric', month: 'short', day: 'numeric', 
@@ -76,11 +100,8 @@ function OrdersModal({ isOpen, onClose }: OrdersModalProps) {
 
   return (
     <div className="fixed inset-0 z-120 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 md:p-6">
-      
-      {/* Modal Container */}
       <div className="bg-gray-50 w-full max-w-4xl rounded-2xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
         
-        {/* Header - Vibrant Blue */}
         <div className="bg-[#3b5cf2] p-6 text-white relative shrink-0">
           <button onClick={onClose} className="absolute top-4 right-4 p-2 hover:bg-white/20 rounded-full transition-colors">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -91,7 +112,6 @@ function OrdersModal({ isOpen, onClose }: OrdersModalProps) {
           <p className="text-white/90 text-[15px] mt-1">Track your order history</p>
         </div>
 
-        {/* Scrollable Body */}
         <div className="p-4 md:p-6 overflow-y-auto no-scrollbar flex flex-col gap-6">
           
           {loading ? (
@@ -108,14 +128,12 @@ function OrdersModal({ isOpen, onClose }: OrdersModalProps) {
             orders.map((order) => (
               <div key={order.id} className="bg-white rounded-xl border border-gray-200 shadow-sm p-5 md:p-6">
                 
-                {/* Order Header */}
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-gray-100 pb-4 mb-4">
                   <div>
                     <h3 className="text-xl font-bold text-gray-900">#ORD-{order.id.toString().padStart(4, '0')}</h3>
                     <p className="text-sm text-gray-500 mt-1">{formatDate(order.orderDate)}</p>
                   </div>
 
-                  {/* Status Badges */}
                   {order.status === 'Delivered' && (
                     <div className="flex items-center gap-1.5 px-4 py-1.5 bg-[#e6f4ea] text-[#137333] border border-[#ceead6] rounded-full font-semibold text-sm">
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
@@ -136,7 +154,6 @@ function OrdersModal({ isOpen, onClose }: OrdersModalProps) {
                   )}
                 </div>
 
-                {/* Order Info */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 border-b border-gray-100 pb-4 mb-4">
                   <div className="flex items-start gap-3">
                     <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center shrink-0">
@@ -171,7 +188,6 @@ function OrdersModal({ isOpen, onClose }: OrdersModalProps) {
                   </div>
                 </div>
 
-                {/* Items List */}
                 <div className="mb-6">
                   <h4 className="text-[15px] font-bold text-gray-900 mb-3">Order Items</h4>
                   <div className="flex flex-col gap-3">
@@ -192,10 +208,42 @@ function OrdersModal({ isOpen, onClose }: OrdersModalProps) {
                   </div>
                 </div>
 
-                {/* Total Amount Box */}
-                <div className="bg-[#ebfbf0] border border-[#bbf2cd] rounded-xl p-4 flex justify-between items-center">
+                <div className="bg-[#ebfbf0] border border-[#bbf2cd] rounded-xl p-4 flex justify-between items-center mb-5">
                   <span className="font-bold text-gray-900">Total Amount</span>
                   <span className="text-xl font-bold text-[#137333]">LKR {order.totalAmount.toFixed(2)}</span>
+                </div>
+
+                <div className="flex flex-wrap gap-3">
+                  {order.status === 'Delivered' && (
+                    <>
+                      <button className="flex-1 min-w-30 bg-[#34A853] hover:bg-[#2b8f45] text-white font-bold py-2.5 rounded-lg transition-colors flex items-center justify-center gap-2">
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+                        Reorder
+                      </button>
+                    </>
+                  )}
+                  
+                  {order.status === 'Pending' && (
+                    <>
+                      <button className="flex-2 min-w-50 bg-[#3b5cf2] hover:bg-[#324fcc] text-white font-bold py-2.5 rounded-lg transition-colors">
+                        Track Order
+                      </button>
+                      
+                      {/* 🔥 Cancel Order Button */}
+                      <button 
+                        onClick={() => handleCancelOrder(order.id)}
+                        className="flex-1 min-w-30 border border-red-200 bg-red-50 hover:bg-red-100 text-red-600 font-bold py-2.5 rounded-lg transition-colors"
+                      >
+                        Cancel Order
+                      </button>
+                    </>
+                  )}
+
+                  {order.status === 'Cancelled' && (
+                    <button className="border border-gray-300 hover:bg-gray-50 text-gray-700 font-bold px-6 py-2.5 rounded-lg transition-colors w-full sm:w-auto">
+                      Get Help
+                    </button>
+                  )}
                 </div>
 
               </div>
