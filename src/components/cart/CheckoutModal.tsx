@@ -18,7 +18,7 @@ function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
     address: 'Bandaragama, Western Province, Sri Lanka'
   });
   
-  const { cartTotal, clearCart } = useCart();
+  const { cartItems, cartTotal, clearCart } = useCart();
 
   if (!isOpen) {
     if (isSuccess) setIsSuccess(false);
@@ -31,13 +31,55 @@ function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
   const promoDiscount = 5.00;
   const finalTotal = cartTotal > 0 ? (cartTotal + serviceFee + tax - promoDiscount) : 0;
 
-  const handleCheckout = () => {
-    setIsSuccess(true);
-    clearCart(); 
-    setTimeout(() => {
-      setIsSuccess(false);
-      onClose();
-    }, 3000);
+  const handleCheckout = async () => {
+    const token = localStorage.getItem('token');
+    
+    if (!token) {
+      alert("Please login first to place an order!");
+      return;
+    }
+
+    const orderData = {
+      userId: 4,
+      totalAmount: finalTotal,
+      status: "Pending",
+      restaurantName: "C Foods", 
+      deliveryAddress: deliveryInfo.address,
+      arrivalTime: "25-35 min",
+
+      orderDetails: cartItems.map(item => ({
+        foodItemId: item.id,
+        foodItemName: item.name,
+        quantity: item.quantity,
+        price: item.price
+      }))
+    };
+
+    try {
+      const response = await fetch('http://localhost:8080/api/v1/orders', { 
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}` 
+        },
+        body: JSON.stringify(orderData)
+      });
+
+      if (response.ok) {
+        setIsSuccess(true);
+        clearCart(); 
+        
+        setTimeout(() => {
+          setIsSuccess(false);
+          onClose();
+        }, 3000);
+      } else {
+        alert("Something went wrong! Please try again. (Make sure you are logged in)");
+      }
+    } catch (error) {
+      console.error("Error placing order:", error);
+      alert("Server error! Cannot connect to backend.");
+    }
   };
 
   return (
@@ -187,7 +229,6 @@ function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
             {/* Footer */}
             <div className="p-5 border-t border-gray-100 bg-gray-50 shrink-0">
               <div className="flex justify-between items-center mb-4">
-                {/* මම මෙතන font-medium සහ font-bold විදියට ඔරිජිනල් සයිස් එකට හැදුවා */}
                 <span className="text-gray-600 font-medium">Total to Pay</span>
                 <span className="text-xl font-bold text-[#34A853]">LKR {finalTotal.toFixed(2)}</span>
               </div>
