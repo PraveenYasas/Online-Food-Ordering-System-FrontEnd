@@ -30,14 +30,22 @@ function FoodItemsSection({ selectedCategory, selectedShop }: FoodItemsSectionPr
 
   useEffect(() => {
     fetch('http://localhost:8080/api/v1/categories')
-      .then(res => res.json())
-      .then(data => setCategories(data))
+      .then(res => {
+        if (!res.ok) throw new Error("Categories fetching failed");
+        return res.json();
+      })
+      .then(data => {
+        if (Array.isArray(data)) setCategories(data);
+      })
       .catch(err => console.error("Error fetching categories:", err));
 
     fetch('http://localhost:8080/api/v1/food-items')
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok) throw new Error("Food items fetching failed");
+        return res.json();
+      })
       .then(data => {
-        setFoods(data);
+        if (Array.isArray(data)) setFoods(data);
         setLoading(false);
       })
       .catch(err => {
@@ -92,9 +100,8 @@ function FoodItemsSection({ selectedCategory, selectedShop }: FoodItemsSectionPr
             const categoryName = getCategoryName(food.categoryId);
             
             const imageUrl = food.imageUrl 
-              ? `http://localhost:8080${food.imageUrl}` 
-              : 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80'; // Placeholder
-
+              ? `http://localhost:8080/api/v1${food.imageUrl}` 
+              : 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80';
             return (
               <div key={food.id} className="bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 group overflow-hidden flex flex-col">
                 
