@@ -34,7 +34,9 @@ export default function ShopPanel() {
 
   const fetchFoodItems = async () => {
     try {
-      const res = await fetch('http://localhost:8080/api/v1/food-items');
+      const res = await fetch('http://localhost:8080/api/v1/food-items/restaurant/1', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
       if (res.ok) {
         const data = await res.json();
         setFoodItems(data);
