@@ -44,7 +44,7 @@ export default function ShopPanel() {
         });
         if (res.ok) {
           const data = await res.json();
-          const live = data.filter((o: any) => o.status === 'Pending');
+          const live = data.filter((o: any) => o.status === 'Pending' || o.status === 'Processing');
           live.sort((a: any, b: any) => new Date(b.orderDate).getTime() - new Date(a.orderDate).getTime());
           setPendingOrders(live);
         }
@@ -122,7 +122,7 @@ export default function ShopPanel() {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) {
-        setPendingOrders(pendingOrders.filter(order => order.id !== orderId));
+        setPendingOrders(pendingOrders.map(order => order.id === orderId ? { ...order, status: 'Processing' } : order));
         setIsAcceptSuccessOpen(true);
       } else {
         alert("Failed to accept order.");
@@ -147,6 +147,21 @@ export default function ShopPanel() {
       }
     } catch (error) {
       console.error("Error rejecting order:", error);
+    }
+  };
+
+  // 🔥 අලුතින් හැදුවා: කෑම එක යැව්වම Status එක 'Delivered' කරනවා
+  const handleDeliverOrder = async (orderId: number) => {
+    try {
+      const res = await fetch(`http://localhost:8080/api/v1/orders/${orderId}/status?status=Delivered`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (res.ok) {
+        setPendingOrders(pendingOrders.filter(order => order.id !== orderId));
+      }
+    } catch (error) {
+      console.error("Error delivering order:", error);
     }
   };
 
@@ -249,9 +264,10 @@ export default function ShopPanel() {
                     <div key={order.id} className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow">
                         <div className="flex flex-wrap items-center justify-between border-b border-gray-100 pb-4 mb-4 gap-4">
                           <div className="flex items-center gap-3">
-                              <span className="bg-yellow-50 text-yellow-700 font-bold px-3 py-1 rounded-lg text-xs uppercase tracking-wider flex items-center gap-1.5">
-                                <div className="w-1.5 h-1.5 bg-yellow-500 rounded-full animate-pulse"></div>
-                                New Order
+                              {/* 🔥 Status එක අනුව Badge එකේ පාට වෙනස් වෙනවා */}
+                              <span className={`font-bold px-3 py-1 rounded-lg text-xs uppercase tracking-wider flex items-center gap-1.5 ${order.status === 'Pending' ? 'bg-yellow-50 text-yellow-700' : 'bg-blue-50 text-blue-700'}`}>
+                                <div className={`w-1.5 h-1.5 rounded-full animate-pulse ${order.status === 'Pending' ? 'bg-yellow-500' : 'bg-blue-500'}`}></div>
+                                {order.status === 'Pending' ? 'New Order' : 'Preparing (Processing)'}
                               </span>
                               <h3 className="text-xl font-black text-gray-900">#ORD-{order.id.toString().padStart(4, '0')}</h3>
                               <span className="text-sm font-medium text-gray-500">
@@ -294,11 +310,22 @@ export default function ShopPanel() {
                         </div>
 
                         <div className="flex gap-3 justify-end">
-                          <button onClick={() => handleRejectOrder(order.id)} className="px-6 py-2.5 rounded-xl font-bold text-red-600 hover:bg-red-50 border border-transparent hover:border-red-100 transition-all">Reject Order</button>
-                          <button onClick={() => handleAcceptOrder(order.id)} className="bg-[#34A853] hover:bg-[#2b8f45] text-white px-8 py-2.5 rounded-xl font-bold flex items-center gap-2 transition-all shadow-sm shadow-green-200">
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg>
-                            Accept & Prepare
-                          </button>
+                          {order.status === 'Pending' && (
+                            <>
+                              <button onClick={() => handleRejectOrder(order.id)} className="px-6 py-2.5 rounded-xl font-bold text-red-600 hover:bg-red-50 border border-transparent hover:border-red-100 transition-all">Reject Order</button>
+                              <button onClick={() => handleAcceptOrder(order.id)} className="bg-[#34A853] hover:bg-[#2b8f45] text-white px-8 py-2.5 rounded-xl font-bold flex items-center gap-2 transition-all shadow-sm shadow-green-200">
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg>
+                                Accept & Prepare
+                              </button>
+                            </>
+                          )}
+                          
+                          {order.status === 'Processing' && (
+                            <button onClick={() => handleDeliverOrder(order.id)} className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-2.5 rounded-xl font-bold flex items-center gap-2 transition-all shadow-sm shadow-blue-200">
+                              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg>
+                              Mark as Delivered
+                            </button>
+                          )}
                         </div>
                     </div>
                   ))}
