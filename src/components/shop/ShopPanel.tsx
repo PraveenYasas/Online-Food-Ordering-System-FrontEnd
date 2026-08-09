@@ -8,7 +8,7 @@ import ShopOrdersTab from './ShopOrdersTab';
 import ShopMenuTab from './ShopMenuTab';
 import AddFoodModal from './AddFoodModal';
 
-function ShopPanel() {
+export default function ShopPanel() {
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -24,7 +24,25 @@ function ShopPanel() {
   
   const [categories, setCategories] = useState<any[]>([]);
   const [pendingOrders, setPendingOrders] = useState<any[]>([]);
+  const [foodItems, setFoodItems] = useState<any[]>([]);
+  
+  // Stats States
+  const [ordersToday, setOrdersToday] = useState(0);
+  const [revenueToday, setRevenueToday] = useState(0);
+
   const token = localStorage.getItem('token'); 
+
+  const fetchFoodItems = async () => {
+    try {
+      const res = await fetch('http://localhost:8080/api/v1/food-items');
+      if (res.ok) {
+        const data = await res.json();
+        setFoodItems(data);
+      }
+    } catch (e) {
+      console.error("Error fetching food items", e);
+    }
+  };
 
   useEffect(() => {
     fetch('http://localhost:8080/api/v1/categories', {
@@ -33,6 +51,23 @@ function ShopPanel() {
       .then(res => res.json())
       .then(data => setCategories(data))
       .catch(err => console.error("Error fetching categories:", err));
+
+    fetchFoodItems();
+
+    const fetchStats = async () => {
+      try {
+        const res = await fetch('http://localhost:8080/api/v1/orders/stats/today', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setOrdersToday(data.ordersToday);
+          setRevenueToday(data.revenueToday);
+        }
+      } catch (error) {
+        console.error("Error fetching stats:", error);
+      }
+    };
 
     const fetchLiveOrders = async () => {
       try {
@@ -50,8 +85,14 @@ function ShopPanel() {
       }
     };
 
+    fetchStats();
     fetchLiveOrders();
-    const intervalId = setInterval(fetchLiveOrders, 10000);
+    
+    const intervalId = setInterval(() => {
+        fetchStats();
+        fetchLiveOrders();
+    }, 10000);
+    
     return () => clearInterval(intervalId);
   }, [token]);
 
@@ -108,7 +149,9 @@ function ShopPanel() {
         <ShopHeader activeTab={activeTab} onLogout={handleLogout} />
 
         <div className="p-8">
-          {activeTab === 'dashboard' && <ShopDashboardTab />}
+          {activeTab === 'dashboard' && (
+            <ShopDashboardTab ordersToday={ordersToday} revenueToday={revenueToday} />
+          )}
           
           {activeTab === 'orders' && (
             <ShopOrdersTab 
@@ -120,14 +163,17 @@ function ShopPanel() {
           )}
 
           {activeTab === 'menu' && (
-            <ShopMenuTab onOpenAddFood={() => setIsFoodModalOpen(true)} />
+            <ShopMenuTab onOpenAddFood={() => setIsFoodModalOpen(true)} foodItems={foodItems} />
           )}
         </div>
 
         {/* Modals */}
         <AddFoodModal 
           isOpen={isFoodModalOpen} 
-          onClose={() => setIsFoodModalOpen(false)} 
+          onClose={() => {
+            setIsFoodModalOpen(false);
+            fetchFoodItems();
+          }} 
           categories={categories} 
           token={token} 
         />
@@ -146,5 +192,3 @@ function ShopPanel() {
     </div>
   );
 }
-
-export default ShopPanel;
