@@ -8,7 +8,7 @@ interface ShopOrdersTabProps {
 function ShopOrdersTab({ pendingOrders, onAccept, onReject, onDeliver }: ShopOrdersTabProps) {
   if (pendingOrders.length === 0) {
     return (
-      <div className="bg-white border border-gray-200 rounded-2xl p-12 text-center flex flex-col items-center justify-center shadow-sm max-w-4xl">
+      <div className="bg-white border border-gray-200 rounded-2xl p-12 text-center flex flex-col items-center justify-center shadow-sm w-full">
         <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mb-4">
           <span className="text-4xl">🎉</span>
         </div>
@@ -19,7 +19,7 @@ function ShopOrdersTab({ pendingOrders, onAccept, onReject, onDeliver }: ShopOrd
   }
 
   return (
-    <div className="max-w-4xl grid grid-cols-1 gap-6">
+    <div className="w-full grid grid-cols-1 gap-6">
       {pendingOrders.map((order) => (
         <div key={order.id} className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow">
             <div className="flex flex-wrap items-center justify-between border-b border-gray-100 pb-4 mb-4 gap-4">
