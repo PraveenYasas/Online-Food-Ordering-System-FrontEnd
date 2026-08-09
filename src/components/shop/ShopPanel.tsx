@@ -23,6 +23,8 @@ export default function ShopPanel() {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [categories, setCategories] = useState<any[]>([]);
 
+  const [pendingOrders, setPendingOrders] = useState<any[]>([]);
+
   const token = localStorage.getItem('token'); 
 
   useEffect(() => {
@@ -34,6 +36,28 @@ export default function ShopPanel() {
       .then(res => res.json())
       .then(data => setCategories(data))
       .catch(err => console.error("Error fetching categories:", err));
+
+    const fetchLiveOrders = async () => {
+      try {
+        const res = await fetch('http://localhost:8080/api/v1/orders/all', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          const live = data.filter((o: any) => o.status === 'Pending');
+          live.sort((a: any, b: any) => new Date(b.orderDate).getTime() - new Date(a.orderDate).getTime());
+          setPendingOrders(live);
+        }
+      } catch (error) {
+        console.error("Error fetching live orders:", error);
+      }
+    };
+
+    fetchLiveOrders();
+    
+    const intervalId = setInterval(fetchLiveOrders, 10000);
+    
+    return () => clearInterval(intervalId);
   }, [token]);
 
   const handleSaveFood = async (e: React.FormEvent) => {
@@ -91,38 +115,39 @@ export default function ShopPanel() {
     }
   };
 
-  const [pendingOrders, setPendingOrders] = useState([
-    {
-      id: '#ORD-8821',
-      time: '2 mins ago',
-      customer: 'Praveen Yasas',
-      type: 'Delivery',
-      items: [
-        { qty: 2, name: 'Cheese Burger', price: 1700 },
-        { qty: 1, name: 'Coca Cola', price: 400 }
-      ],
-      total: '2,100.00'
-    },
-    {
-      id: '#ORD-8822',
-      time: '5 mins ago',
-      customer: 'Kamal Perera',
-      type: 'Pickup',
-      items: [
-        { qty: 1, name: 'Spicy Chicken Burger', price: 1200 },
-        { qty: 2, name: 'French Fries', price: 900 }
-      ],
-      total: '2,100.00'
+  const handleAcceptOrder = async (orderId: number) => {
+    try {
+      const res = await fetch(`http://localhost:8080/api/v1/orders/${orderId}/status?status=Processing`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (res.ok) {
+        setPendingOrders(pendingOrders.filter(order => order.id !== orderId));
+        setIsAcceptSuccessOpen(true);
+      } else {
+        alert("Failed to accept order.");
+      }
+    } catch (error) {
+      console.error("Error accepting order:", error);
     }
-  ]);
-
-  const handleAcceptOrder = (orderId: string) => {
-    setPendingOrders(pendingOrders.filter(order => order.id !== orderId));
-    setIsAcceptSuccessOpen(true);
   };
 
-  const handleRejectOrder = (orderId: string) => {
-    setPendingOrders(pendingOrders.filter(order => order.id !== orderId));
+  const handleRejectOrder = async (orderId: number) => {
+    const confirmReject = window.confirm("Are you sure you want to reject this order?");
+    if (!confirmReject) return;
+    try {
+      const res = await fetch(`http://localhost:8080/api/v1/orders/${orderId}/status?status=Cancelled`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (res.ok) {
+        setPendingOrders(pendingOrders.filter(order => order.id !== orderId));
+      } else {
+        alert("Failed to reject order.");
+      }
+    } catch (error) {
+      console.error("Error rejecting order:", error);
+    }
   };
 
   return (
@@ -228,11 +253,13 @@ export default function ShopPanel() {
                                 <div className="w-1.5 h-1.5 bg-yellow-500 rounded-full animate-pulse"></div>
                                 New Order
                               </span>
-                              <h3 className="text-xl font-black text-gray-900">{order.id}</h3>
-                              <span className="text-sm font-medium text-gray-500">{order.time}</span>
+                              <h3 className="text-xl font-black text-gray-900">#ORD-{order.id.toString().padStart(4, '0')}</h3>
+                              <span className="text-sm font-medium text-gray-500">
+                                {new Date(order.orderDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                              </span>
                           </div>
                           <div className="flex items-center gap-2 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-200">
-                             <span className="text-sm font-bold text-gray-700">{order.type}</span>
+                             <span className="text-sm font-bold text-gray-700">Delivery</span>
                           </div>
                         </div>
 
@@ -240,11 +267,11 @@ export default function ShopPanel() {
                           <div className="flex-1 bg-gray-50 rounded-xl p-4 border border-gray-100">
                             <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Order Items</h4>
                             <ul className="space-y-2">
-                              {order.items.map((item, index) => (
+                              {order.orderDetails?.map((item: any, index: number) => (
                                 <li key={index} className="flex justify-between items-center text-sm">
                                   <div className="flex items-center gap-2">
-                                    <span className="font-bold text-gray-900 bg-white border border-gray-200 w-6 h-6 flex items-center justify-center rounded text-xs">{item.qty}x</span>
-                                    <span className="font-medium text-gray-700">{item.name}</span>
+                                    <span className="font-bold text-gray-900 bg-white border border-gray-200 w-6 h-6 flex items-center justify-center rounded text-xs">{item.quantity}x</span>
+                                    <span className="font-medium text-gray-700">{item.foodItemName}</span>
                                   </div>
                                 </li>
                               ))}
@@ -255,13 +282,13 @@ export default function ShopPanel() {
                             <div>
                                <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Customer</h4>
                                <p className="font-semibold text-gray-800 flex items-center gap-2">
-                                 <div className="w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-xs">{order.customer.charAt(0)}</div>
-                                 {order.customer}
+                                 <div className="w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-xs">C</div>
+                                 Customer Name
                                </p>
                             </div>
                             <div className="mt-4 pt-4 border-t border-gray-100">
                               <p className="text-sm text-gray-500 font-medium">Total Amount</p>
-                              <p className="text-2xl font-black text-[#34A853]">LKR {order.total}</p>
+                              <p className="text-2xl font-black text-[#34A853]">LKR {order.totalAmount.toFixed(2)}</p>
                             </div>
                           </div>
                         </div>
@@ -388,7 +415,6 @@ export default function ShopPanel() {
                     ></textarea>
                   </div>
 
-                  {/* 🔥 Image File Input එක 🔥 */}
                   <div>
                     <label className="block text-sm font-semibold text-gray-800 mb-1.5">Upload Food Image</label>
                     <input 
