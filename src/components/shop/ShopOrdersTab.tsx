@@ -56,10 +56,10 @@ function ShopOrdersTab({ pendingOrders, onAccept, onReject, onDeliver }: ShopOrd
               <div className="w-full md:w-64 flex flex-col justify-between">
                 <div>
                    <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Customer</h4>
-                   <p className="font-semibold text-gray-800 flex items-center gap-2">
+                   <div className="font-semibold text-gray-800 flex items-center gap-2">
                      <div className="w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-xs">C</div>
-                     Customer Name
-                   </p>
+                     <span>Customer Name</span>
+                   </div>
                 </div>
                 <div className="mt-4 pt-4 border-t border-gray-100">
                   <p className="text-sm text-gray-500 font-medium">Total Amount</p>
