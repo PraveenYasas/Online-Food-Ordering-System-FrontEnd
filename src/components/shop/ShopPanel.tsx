@@ -65,6 +65,7 @@ export default function ShopPanel() {
           const data = await res.json();
           setOrdersToday(data.ordersToday);
           setRevenueToday(data.revenueToday);
+          setTopSellingItem(data.topSellingItem || 'N/A');
         }
       } catch (error) {
         console.error("Error fetching stats:", error);
@@ -143,6 +144,8 @@ export default function ShopPanel() {
     }
   };
 
+  const [topSellingItem, setTopSellingItem] = useState('N/A');
+
   return (
     <div className="min-h-screen bg-gray-50 flex">
       <ShopSidebar activeTab={activeTab} setActiveTab={setActiveTab} pendingOrdersCount={pendingOrders.length} />
@@ -152,7 +155,7 @@ export default function ShopPanel() {
 
         <div className="p-8">
           {activeTab === 'dashboard' && (
-            <ShopDashboardTab ordersToday={ordersToday} revenueToday={revenueToday} />
+            <ShopDashboardTab ordersToday={ordersToday} revenueToday={revenueToday} topSellingItem={topSellingItem} />
           )}
           
           {activeTab === 'orders' && (

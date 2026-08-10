@@ -1,9 +1,10 @@
 interface ShopDashboardTabProps {
   ordersToday: number;
   revenueToday: number;
+  topSellingItem: string;
 }
 
-function ShopDashboardTab({ ordersToday, revenueToday }: ShopDashboardTabProps) {
+function ShopDashboardTab({ ordersToday, revenueToday, topSellingItem }: ShopDashboardTabProps) {
   const safeRevenue = Number(revenueToday || 0);
 
   return (
@@ -18,7 +19,7 @@ function ShopDashboardTab({ ordersToday, revenueToday }: ShopDashboardTabProps) 
       </div>
       <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
         <p className="text-gray-500 text-sm font-medium mb-1">Top Selling Item</p>
-        <p className="text-xl font-bold text-gray-900 mt-2">BiteDash Special</p>
+        <p className="text-xl font-bold text-gray-900 mt-2">{topSellingItem}</p>
       </div>
     </div>
   );
