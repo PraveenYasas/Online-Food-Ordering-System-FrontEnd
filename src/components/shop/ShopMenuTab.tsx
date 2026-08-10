@@ -27,9 +27,22 @@ function ShopMenuTab({ onOpenAddFood, foodItems }: ShopMenuTabProps) {
              const safePrice = Number(item.price || 0);
              return (
                <div key={item.id} className="border border-gray-200 rounded-xl p-4 flex flex-col items-center text-center relative group hover:border-[#34A853] transition-colors">
-                  <div className="w-24 h-24 bg-gray-50 rounded-full flex items-center justify-center text-4xl mb-3 overflow-hidden shadow-sm">
+                <div className="w-24 h-24 bg-gray-50 rounded-full flex items-center justify-center text-4xl mb-3 overflow-hidden shadow-sm">
                     {item.imageUrl ? (
-                      <img src={`http://localhost:8080${item.imageUrl}`} alt={item.name} className="w-full h-full object-cover" />
+                      <img 
+                        src={
+                          item.imageUrl.startsWith('http') 
+                            ? item.imageUrl 
+                            : `http://localhost:8080/api/v1${item.imageUrl.startsWith('/') ? '' : '/'}${item.imageUrl}`
+                        } 
+                        alt={item.name} 
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                           (e.target as HTMLImageElement).style.display = 'none';
+                           const parent = (e.target as HTMLImageElement).parentElement;
+                           if (parent) parent.innerHTML = '🍔';
+                        }}
+                      />
                     ) : (
                       "🍔"
                     )}
