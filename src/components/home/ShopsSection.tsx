@@ -12,7 +12,6 @@ interface RestaurantDTO {
   address: string;
   contactNumber: string;
   imageUrl?: string;
-  
 }
 
 function ShopsSection({ selectedShop, onSelectShop, userId }: ShopsSectionProps) {
@@ -122,15 +121,16 @@ function ShopsSection({ selectedShop, onSelectShop, userId }: ShopsSectionProps)
         onTouchMove={onDrag}
       >
         
+        {/* All Shops Card */}
         <div 
           onClick={() => onSelectShop('All Shops')}
-          className={`w-260px shrink-0 flex flex-col bg-white rounded-2xl overflow-hidden transition-all duration-300 group cursor-pointer ${
+          className={`w-[280px] min-w-[280px] shrink-0 flex flex-col bg-white rounded-2xl overflow-hidden transition-all duration-300 group cursor-pointer ${
             selectedShop === 'All Shops'
               ? 'ring-2 ring-[#34A853] border border-transparent shadow-md scale-[1.02]' 
               : 'border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_25px_rgba(0,0,0,0.08)] hover:-translate-y-1'
           }`}
         >
-          <div className="w-full h-full min-h-220px bg-[#f0f9f2] flex flex-col items-center justify-center text-[#34A853] p-6 text-center">
+          <div className="w-full h-full min-h-[220px] bg-[#f0f9f2] flex flex-col items-center justify-center text-[#34A853] p-6 text-center">
             <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm mb-4">
               <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>
             </div>
@@ -139,6 +139,7 @@ function ShopsSection({ selectedShop, onSelectShop, userId }: ShopsSectionProps)
           </div>
         </div>
 
+        {/* Restaurant Cards */}
         {restaurants.map((shop) => {
           const isFavorite = favoriteRestaurantIds.includes(shop.id);
           const shopImage = shop.imageUrl 
@@ -149,16 +150,16 @@ function ShopsSection({ selectedShop, onSelectShop, userId }: ShopsSectionProps)
             <div 
               key={shop.id} 
               onClick={() => onSelectShop(shop.name)}
-              className={`w-260px shrink-0 flex flex-col bg-white rounded-2xl overflow-hidden transition-all duration-300 group cursor-pointer ${
+              className={`w-[280px] min-w-[280px] shrink-0 flex flex-col bg-white rounded-2xl overflow-hidden transition-all duration-300 group cursor-pointer ${
                 selectedShop === shop.name 
                   ? 'ring-2 ring-[#34A853] border border-transparent shadow-md scale-[1.02]' 
                   : 'border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_25px_rgba(0,0,0,0.08)] hover:-translate-y-1'
               }`}
             >
-              <div className="relative h-32 w-full overflow-hidden">
+              <div className="relative h-40 w-full overflow-hidden bg-gray-100">
                 <img src={shopImage} alt={shop.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 pointer-events-none" />
                 
-                {/* 🔥 Favorite Button එක */}
+                {/* Favorite Button */}
                 <button 
                   onClick={(e) => toggleFavorite(e, shop.id)} 
                   className="absolute top-2 right-2 bg-white/90 p-1.5 rounded-full shadow text-[#d81b60] hover:bg-red-50 transition-colors cursor-pointer z-10"
