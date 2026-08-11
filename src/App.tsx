@@ -115,7 +115,8 @@ function App() {
 
         <FavoritesModal 
           isOpen={activeModal === 'favorites'} 
-          onClose={closeModal} 
+          onClose={closeModal}
+          userId={4}
         />
 
         <LoginModal 

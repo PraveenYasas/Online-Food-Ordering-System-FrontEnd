@@ -39,10 +39,11 @@ export default function Home() {
       
       {/* Food Items with a modern rounded top container background */}
       <div className="bg-gray-50 rounded-t-[40px] pt-8 shadow-[0_-10px_40px_rgba(0,0,0,0.02)]">
-        <FoodItemsSection 
-          selectedShop={selectedShop}
-          selectedCategory={selectedCategory} 
-        />
+      <FoodItemsSection 
+        selectedCategory={selectedCategory} 
+        selectedShop={selectedShop} 
+        userId={4}
+      />
       </div>
       
     </main>
