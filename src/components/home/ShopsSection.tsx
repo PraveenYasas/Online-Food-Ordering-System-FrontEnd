@@ -25,7 +25,7 @@ function ShopsSection({ selectedShop, onSelectShop, userId }: ShopsSectionProps)
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('http://localhost:8080/api/v1/restaurants')
+    fetch('http://localhost:8080/api/v1/restaurants', { cache: 'no-store' })
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data)) setRestaurants(data);
@@ -36,26 +36,48 @@ function ShopsSection({ selectedShop, onSelectShop, userId }: ShopsSectionProps)
         setLoading(false);
       });
 
-    if (userId) {
-      fetch(`http://localhost:8080/api/v1/favorites/restaurant/${userId}`)
-        .then(res => res.json())
-        .then(data => {
-          if (Array.isArray(data)) {
-            setFavoriteRestaurantIds(data.map((fav: any) => fav.restaurant.id));
-          }
-        })
-        .catch(err => console.error("Error fetching favorite restaurants:", err));
-    }
+    const fetchFavorites = () => {
+      if (userId) {
+        fetch(`http://localhost:8080/api/v1/favorites/restaurant/${userId}`, { cache: 'no-store' })
+          .then(res => res.json())
+          .then(data => {
+            if (Array.isArray(data)) {
+              setFavoriteRestaurantIds(data.map((fav: any) => fav.restaurant.id));
+            }
+          })
+          .catch(err => console.error("Error fetching favorite restaurants:", err));
+      }
+    };
+
+    fetchFavorites();
+
+    const handleSync = (e: Event) => {
+      const customEvent = e as CustomEvent;
+      const { id, isFavorite } = customEvent.detail;
+      setFavoriteRestaurantIds(prev => {
+        if (isFavorite) {
+          return prev.includes(id) ? prev : [...prev, id];
+        } else {
+          return prev.filter(favId => favId !== id);
+        }
+      });
+    };
+
+    window.addEventListener('syncRestaurantFavorite', handleSync);
+    return () => window.removeEventListener('syncRestaurantFavorite', handleSync);
   }, [userId]);
 
   const toggleFavorite = (e: React.MouseEvent, restaurantId: number) => {
     e.stopPropagation(); 
+    const willBeFavorite = !favoriteRestaurantIds.includes(restaurantId);
+
     fetch(`http://localhost:8080/api/v1/favorites/restaurant/${userId}/${restaurantId}`, { method: 'POST' })
       .then(res => {
         if (res.ok) {
           setFavoriteRestaurantIds(prev => 
-            prev.includes(restaurantId) ? prev.filter(id => id !== restaurantId) : [...prev, restaurantId]
+            willBeFavorite ? [...prev, restaurantId] : prev.filter(id => id !== restaurantId)
           );
+          window.dispatchEvent(new CustomEvent('syncRestaurantFavorite', { detail: { id: restaurantId, isFavorite: willBeFavorite } }));
         }
       })
       .catch(err => console.error("Error toggling favorite restaurant:", err));

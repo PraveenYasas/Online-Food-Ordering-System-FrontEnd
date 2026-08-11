@@ -12,31 +12,53 @@ function FavoritesModal({ isOpen, onClose, userId }: FavoritesModalProps) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (isOpen && userId) {
-      setLoading(true);
-      
-      fetch(`http://localhost:8080/api/v1/favorites/restaurant/${userId}`)
-        .then(res => res.json())
-        .then(data => { if (Array.isArray(data)) setFavoriteRestaurants(data); })
-        .catch(err => console.error(err));
+    const fetchFavoritesData = () => {
+      if (userId) {
+        setLoading(true);
+        fetch(`http://localhost:8080/api/v1/favorites/restaurant/${userId}`, { cache: 'no-store' })
+          .then(res => res.json())
+          .then(data => { if (Array.isArray(data)) setFavoriteRestaurants(data); })
+          .catch(err => console.error(err));
 
-      fetch(`http://localhost:8080/api/v1/favorites/food/${userId}`)
-        .then(res => res.json())
-        .then(data => {
-          if (Array.isArray(data)) setFavoriteDishes(data);
-          setLoading(false);
-        })
-        .catch(err => {
-          console.error(err);
-          setLoading(false);
-        });
+        fetch(`http://localhost:8080/api/v1/favorites/food/${userId}`, { cache: 'no-store' })
+          .then(res => res.json())
+          .then(data => {
+            if (Array.isArray(data)) setFavoriteDishes(data);
+            setLoading(false);
+          })
+          .catch(err => {
+            console.error(err);
+            setLoading(false);
+          });
+      }
+    };
+
+    if (isOpen) {
+      fetchFavoritesData();
     }
+
+    const handleSync = (e: Event) => {
+      const customEvent = e as CustomEvent;
+      const { id, isFavorite } = customEvent.detail;
+      
+      if (!isFavorite) {
+        setFavoriteRestaurants(prev => prev.filter(item => item.restaurant.id !== id));
+      } else {
+        if (isOpen) fetchFavoritesData();
+      }
+    };
+
+    window.addEventListener('syncRestaurantFavorite', handleSync);
+    return () => window.removeEventListener('syncRestaurantFavorite', handleSync);
   }, [isOpen, userId]);
 
   const handleRemoveRestaurant = (restaurantId: number) => {
     fetch(`http://localhost:8080/api/v1/favorites/restaurant/${userId}/${restaurantId}`, { method: 'POST' })
       .then(res => {
-        if (res.ok) setFavoriteRestaurants(prev => prev.filter(item => item.restaurant.id !== restaurantId));
+        if (res.ok) {
+          setFavoriteRestaurants(prev => prev.filter(item => item.restaurant.id !== restaurantId));
+          window.dispatchEvent(new CustomEvent('syncRestaurantFavorite', { detail: { id: restaurantId, isFavorite: false } }));
+        }
       })
       .catch(err => console.error(err));
   };
@@ -44,11 +66,13 @@ function FavoritesModal({ isOpen, onClose, userId }: FavoritesModalProps) {
   const handleRemoveFood = (foodItemId: number) => {
     fetch(`http://localhost:8080/api/v1/favorites/food/${userId}/${foodItemId}`, { method: 'POST' })
       .then(res => {
-        if (res.ok) setFavoriteDishes(prev => prev.filter(item => item.foodItem.id !== foodItemId));
+        if (res.ok) {
+          setFavoriteDishes(prev => prev.filter(item => item.foodItem.id !== foodItemId));
+        }
       })
       .catch(err => console.error(err));
   };
-
+  
   if (!isOpen) return null;
 
   return (
@@ -83,7 +107,11 @@ function FavoritesModal({ isOpen, onClose, userId }: FavoritesModalProps) {
                       return (
                         <div key={fav.id} className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden flex flex-col">
                           <div className="relative h-48 w-full bg-gray-100">
-                            <img src={rest.image || "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?auto=format&fit=crop&w=800&q=80"} alt={rest.name} className="w-full h-full object-cover" />
+                            <img 
+                              src={rest.imageUrl ? `http://localhost:8080/api/v1${rest.imageUrl}` : "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=800&q=80"} 
+                              alt={rest.name} 
+                              className="w-full h-full object-cover" 
+                            />
                             <button onClick={() => handleRemoveRestaurant(rest.id)} className="absolute top-3 right-3 bg-white p-2 rounded-full shadow text-[#d81b60] hover:bg-red-50 cursor-pointer">
                               <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
                             </button>
