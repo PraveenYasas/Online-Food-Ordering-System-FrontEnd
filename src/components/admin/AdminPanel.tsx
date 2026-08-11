@@ -13,27 +13,65 @@ function AdminPanel() {
   const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchAdminData = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        const headers = { 'Authorization': `Bearer ${token}` };
+  // Edit Store States
+  const [editingStore, setEditingStore] = useState<any>(null);
+  const [editName, setEditName] = useState('');
+  const [editAddress, setEditAddress] = useState('');
+  const [editContact, setEditContact] = useState('');
+  const [editImage, setEditImage] = useState<File | null>(null);
 
-        const storesRes = await fetch('http://localhost:8080/api/v1/restaurants', { headers });
-        const storesData = await storesRes.json();
-        if (Array.isArray(storesData)) setStores(storesData);
+  const fetchAdminData = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const headers = { 'Authorization': `Bearer ${token}` };
 
-        const usersRes = await fetch('http://localhost:8080/api/v1/users', { headers });
-        const usersData = await usersRes.json();
-        if (Array.isArray(usersData)) setUsers(usersData);
+      const storesRes = await fetch('http://localhost:8080/api/v1/restaurants', { headers });
+      const storesData = await storesRes.json();
+      if (Array.isArray(storesData)) setStores(storesData);
 
-      } catch (error) {
-        console.error("Error fetching admin data:", error);
-      } finally {
-        setLoading(false);
+      const usersRes = await fetch('http://localhost:8080/api/v1/users', { headers });
+      const usersData = await usersRes.json();
+      if (Array.isArray(usersData)) setUsers(usersData);
+
+    } catch (error) {
+      console.error("Error fetching admin data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleUpdateStore = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingStore) return;
+
+    try {
+      const token = localStorage.getItem('token');
+      const formData = new FormData();
+      formData.append('name', editName);
+      formData.append('address', editAddress);
+      formData.append('contactNumber', editContact);
+      if (editImage) {
+        formData.append('image', editImage);
       }
-    };
 
+      const res = await fetch(`http://localhost:8080/api/v1/restaurants/${editingStore.id}`, {
+        method: 'PUT',
+        headers: { 'Authorization': `Bearer ${token}` },
+        body: formData
+      });
+
+      if (res.ok) {
+        setEditingStore(null);
+        fetchAdminData();
+      } else {
+        alert('Failed to update store');
+      }
+    } catch (error) {
+      console.error("Error updating store:", error);
+    }
+  };
+
+  useEffect(() => {
     fetchAdminData();
   }, []);
 
@@ -118,7 +156,16 @@ function AdminPanel() {
                             <tr key={store.id} className="hover:bg-gray-50 transition-colors">
                               <td className="py-4 px-6 font-semibold text-gray-900">{store.name}</td>
                               <td className="py-4 px-6 text-gray-600 text-sm">{store.contactNumber}</td>
-                              <td className="py-4 px-6 text-right"><button className="text-red-500 font-medium text-sm hover:underline cursor-pointer">Suspend</button></td>
+                              <td className="py-4 px-6 text-right space-x-3">
+                                <button onClick={() => {
+                                  setEditingStore(store);
+                                  setEditName(store.name);
+                                  setEditAddress(store.address || '');
+                                  setEditContact(store.contactNumber || '');
+                                  setEditImage(null);
+                                }} className="text-blue-600 font-medium text-sm hover:underline cursor-pointer">Edit</button>
+                                <button className="text-red-500 font-medium text-sm hover:underline cursor-pointer">Suspend</button>
+                              </td>
                             </tr>
                           ))
                         )}
@@ -145,7 +192,6 @@ function AdminPanel() {
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-100">
-                          {/* 🔥 ඩේටාබේස් එකේ තියෙන Users ටික Map කළා */}
                           {users.length === 0 ? (
                             <tr><td colSpan={4} className="py-8 text-center text-gray-500">No users found.</td></tr>
                           ) : (
@@ -155,7 +201,7 @@ function AdminPanel() {
                                   <p className="font-bold text-gray-900 text-sm">{user.firstName} {user.lastName}</p>
                                   <p className="text-gray-500 text-xs">{user.email}</p>
                                 </td>
-                                <td className="py-4 px-6 text-gray-600 text-sm">{user.phone}</td>
+                                <td className="py-4 px-6 text-gray-600 text-sm">{user.phone || user.contactNumber || 'N/A'}</td>
                                 <td className="py-4 px-6">
                                   <span className={`px-2.5 py-1 rounded text-xs font-bold ${
                                     user.role === 'ADMIN' ? 'bg-red-100 text-red-700' :
@@ -176,11 +222,58 @@ function AdminPanel() {
                     </div>
                  </div>
               )}
+
+              {/* EDIT STORE MODAL */}
+              {editingStore && (
+                <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+                  <div className="bg-white w-full max-w-md rounded-2xl p-6 shadow-2xl relative">
+                    <button 
+                      type="button" 
+                      onClick={() => setEditingStore(null)} 
+                      className="absolute top-5 right-5 text-gray-400 hover:text-gray-700 cursor-pointer"
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+
+                    <h3 className="text-xl font-bold text-gray-900 mb-4">Edit Store: {editingStore.name}</h3>
+                    <form onSubmit={handleUpdateStore} className="space-y-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Store Name</label>
+                        <input type="text" value={editName} onChange={(e) => setEditName(e.target.value)} className="w-full border border-gray-300 rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-black text-sm" required />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Address</label>
+                        <input type="text" value={editAddress} onChange={(e) => setEditAddress(e.target.value)} className="w-full border border-gray-300 rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-black text-sm" required />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Contact Number</label>
+                        <input type="text" value={editContact} onChange={(e) => setEditContact(e.target.value)} className="w-full border border-gray-300 rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-black text-sm" required />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Update Store Image</label>
+                        <input type="file" onChange={(e) => setEditImage(e.target.files?.[0] || null)} className="w-full border border-gray-300 rounded-xl px-3 py-2 text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-black file:text-white hover:file:bg-gray-800 cursor-pointer" />
+                      </div>
+                      <div className="flex justify-end gap-3 mt-6">
+                        <button type="button" onClick={() => setEditingStore(null)} className="px-5 py-2.5 rounded-xl border border-gray-200 text-gray-700 font-semibold text-sm hover:bg-gray-50 cursor-pointer">Cancel</button>
+                        <button type="submit" className="px-5 py-2.5 rounded-xl bg-black text-white font-semibold text-sm hover:bg-gray-800 cursor-pointer">Save Changes</button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              )}
             </>
           )}
         </div>
 
-        <AddStoreModal isOpen={isStoreModalOpen} onClose={() => setIsStoreModalOpen(false)} />
+        <AddStoreModal 
+          isOpen={isStoreModalOpen} 
+          onClose={() => {
+            setIsStoreModalOpen(false);
+            fetchAdminData();
+          }} 
+        />
         
       </main>
     </div>
