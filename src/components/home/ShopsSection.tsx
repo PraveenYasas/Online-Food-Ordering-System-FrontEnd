@@ -1,24 +1,70 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 
 interface ShopsSectionProps {
   selectedShop: string;
   onSelectShop: (shop: string) => void;
+  userId: number; // 🔥 ලොග් වෙලා ඉන්න User ගේ ID එක 
 }
 
-const shops = [
-  { name: 'All Shops', image: '', type: 'Explore everything', rating: '', time: '' },
-  { name: 'C Foods', image: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=400&q=80', type: 'Sri Lankan • Asian', rating: '4.8', time: '15-25 min' },
-  { name: 'Burger Hub', image: 'https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=400&q=80', type: 'Fast Food • Burgers', rating: '4.5', time: '10-20 min' },
-  { name: 'Pizza Express', image: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=400&q=80', type: 'Italian • Pizza', rating: '4.9', time: '30-40 min' },
-  { name: 'Asian Wok', image: 'https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=400&q=80', type: 'Chinese • Asian', rating: '4.2', time: '20-30 min' },
-  { name: 'Sweet Tooth', image: 'https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=400&q=80', type: 'Desserts • Bakery', rating: '4.7', time: '10-15 min' },
-];
+interface RestaurantDTO {
+  id: number;
+  name: string;
+  address: string;
+  contactNumber: string;
+  imageUrl?: string;
+  // type, rating, time වගේ දේවල් දැනට DB එකේ නැති නිසා අපි dummy වගේ පෙන්නමු නැත්නම් ඔයාට පස්සේ DB එකට add කරන්න පුළුවන්.
+}
 
-function ShopsSection({ selectedShop, onSelectShop }: ShopsSectionProps) {
+function ShopsSection({ selectedShop, onSelectShop, userId }: ShopsSectionProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
+
+  // 🔥 Real Data ගබඩා කරගන්න States
+  const [restaurants, setRestaurants] = useState<RestaurantDTO[]>([]);
+  const [favoriteRestaurantIds, setFavoriteRestaurantIds] = useState<number[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // 1. කඩවල් ටික ඔක්කොම අදිනවා
+    fetch('http://localhost:8080/api/v1/restaurants')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) setRestaurants(data);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error("Error fetching restaurants:", err);
+        setLoading(false);
+      });
+
+    // 2. User ගේ Favorite කඩවල් ටික අදිනවා (හදවත රතු කරන්න)
+    if (userId) {
+      fetch(`http://localhost:8080/api/v1/favorites/restaurant/${userId}`)
+        .then(res => res.json())
+        .then(data => {
+          if (Array.isArray(data)) {
+            setFavoriteRestaurantIds(data.map((fav: any) => fav.restaurant.id));
+          }
+        })
+        .catch(err => console.error("Error fetching favorite restaurants:", err));
+    }
+  }, [userId]);
+
+  // 🔥 Favorite Button එක එබුවම වැඩ කරන කෑල්ල
+  const toggleFavorite = (e: React.MouseEvent, restaurantId: number) => {
+    e.stopPropagation(); // 🔥 මේක දැම්මේ හදවත ක්ලික් කරාම කඩේ select වෙන එක නවත්තන්න
+    fetch(`http://localhost:8080/api/v1/favorites/restaurant/${userId}/${restaurantId}`, { method: 'POST' })
+      .then(res => {
+        if (res.ok) {
+          setFavoriteRestaurantIds(prev => 
+            prev.includes(restaurantId) ? prev.filter(id => id !== restaurantId) : [...prev, restaurantId]
+          );
+        }
+      })
+      .catch(err => console.error("Error toggling favorite restaurant:", err));
+  };
 
   const scroll = (direction: 'left' | 'right') => {
     if (scrollRef.current) {
@@ -51,6 +97,8 @@ function ShopsSection({ selectedShop, onSelectShop }: ShopsSectionProps) {
     scrollRef.current.scrollLeft = scrollLeft - walk;
   };
 
+  if (loading) return ( <div className="w-full py-10 flex justify-center items-center bg-white"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#34A853]"></div></div> );
+
   return (
     <div className="relative w-full py-4 bg-white">
       <div className="px-14 mb-2 flex justify-between items-end">
@@ -77,48 +125,73 @@ function ShopsSection({ selectedShop, onSelectShop }: ShopsSectionProps) {
         onTouchEnd={stopDrag} 
         onTouchMove={onDrag}
       >
-        {shops.map((shop, index) => (
-          <div 
-            key={index} 
-            onClick={() => onSelectShop(shop.name)}
-            className={`w-260px shrink-0 flex flex-col bg-white rounded-2xl overflow-hidden transition-all duration-300 group cursor-pointer ${
-              selectedShop === shop.name 
-                ? 'ring-2 ring-[#34A853] border border-transparent shadow-md scale-[1.02]' 
-                : 'border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_25px_rgba(0,0,0,0.08)] hover:-translate-y-1'
-            }`}
-          >
-            {shop.name === 'All Shops' ? (
-              <div className="w-full h-full min-h-220px bg-[#f0f9f2] flex flex-col items-center justify-center text-[#34A853] p-6 text-center">
-                <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm mb-4">
-                  <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>
-                </div>
-                <span className="font-bold text-lg text-gray-900">All Shops</span>
-                <p className="text-xs text-gray-500 mt-1">Explore all menus</p>
-              </div>
-            ) : (
-              <>
-                <div className="relative h-32 w-full overflow-hidden">
-                  <img src={shop.image} alt={shop.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 pointer-events-none" />
-                  
-                  <div className="absolute bottom-3 right-3 bg-white/95 backdrop-blur-sm px-2.5 py-1 rounded-full text-[11px] font-bold text-gray-800 shadow-sm flex items-center gap-1">
-                    <svg className="w-3 h-3 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                    {shop.time}
-                  </div>
-                </div>
-
-                <div className="p-4 bg-white relative">
-                  <div className="flex justify-between items-start mb-1">
-                    <h3 className="font-bold text-[17px] text-gray-900 leading-tight truncate pr-2">{shop.name}</h3>
-                    <div className="flex items-center gap-1 bg-gray-50 border border-gray-100 px-1.5 py-0.5 rounded text-xs font-bold text-gray-700 shrink-0">
-                      ⭐ {shop.rating}
-                    </div>
-                  </div>
-                  <p className="text-xs text-gray-500 font-medium truncate">{shop.type}</p>
-                </div>
-              </>
-            )}
+        
+        {/* All Shops Card එක */}
+        <div 
+          onClick={() => onSelectShop('All Shops')}
+          className={`w-260px shrink-0 flex flex-col bg-white rounded-2xl overflow-hidden transition-all duration-300 group cursor-pointer ${
+            selectedShop === 'All Shops'
+              ? 'ring-2 ring-[#34A853] border border-transparent shadow-md scale-[1.02]' 
+              : 'border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_25px_rgba(0,0,0,0.08)] hover:-translate-y-1'
+          }`}
+        >
+          <div className="w-full h-full min-h-220px bg-[#f0f9f2] flex flex-col items-center justify-center text-[#34A853] p-6 text-center">
+            <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm mb-4">
+              <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>
+            </div>
+            <span className="font-bold text-lg text-gray-900">All Shops</span>
+            <p className="text-xs text-gray-500 mt-1">Explore all menus</p>
           </div>
-        ))}
+        </div>
+
+        {/* ඩේටාබේස් එකෙන් එන Shops ටික */}
+        {restaurants.map((shop) => {
+          const isFavorite = favoriteRestaurantIds.includes(shop.id);
+          const shopImage = shop.imageUrl 
+            ? (shop.imageUrl.startsWith('http') ? shop.imageUrl : `http://localhost:8080/api/v1${shop.imageUrl}`) 
+            : "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=400&q=80";
+
+          return (
+            <div 
+              key={shop.id} 
+              onClick={() => onSelectShop(shop.name)}
+              className={`w-260px shrink-0 flex flex-col bg-white rounded-2xl overflow-hidden transition-all duration-300 group cursor-pointer ${
+                selectedShop === shop.name 
+                  ? 'ring-2 ring-[#34A853] border border-transparent shadow-md scale-[1.02]' 
+                  : 'border border-gray-100 shadow-[0_2px_15px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_25px_rgba(0,0,0,0.08)] hover:-translate-y-1'
+              }`}
+            >
+              <div className="relative h-32 w-full overflow-hidden">
+                <img src={shopImage} alt={shop.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 pointer-events-none" />
+                
+                {/* 🔥 Favorite Button එක */}
+                <button 
+                  onClick={(e) => toggleFavorite(e, shop.id)} 
+                  className="absolute top-2 right-2 bg-white/90 p-1.5 rounded-full shadow text-[#d81b60] hover:bg-red-50 transition-colors cursor-pointer z-10"
+                >
+                  <svg className={`w-4 h-4 ${isFavorite ? 'fill-current' : 'fill-none'}`} stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={isFavorite ? 0 : 2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                  </svg>
+                </button>
+
+                <div className="absolute bottom-3 right-3 bg-white/95 backdrop-blur-sm px-2.5 py-1 rounded-full text-[11px] font-bold text-gray-800 shadow-sm flex items-center gap-1">
+                  <svg className="w-3 h-3 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                  20-30 min
+                </div>
+              </div>
+
+              <div className="p-4 bg-white relative">
+                <div className="flex justify-between items-start mb-1">
+                  <h3 className="font-bold text-[17px] text-gray-900 leading-tight truncate pr-2">{shop.name}</h3>
+                  <div className="flex items-center gap-1 bg-gray-50 border border-gray-100 px-1.5 py-0.5 rounded text-xs font-bold text-gray-700 shrink-0">
+                    ⭐ 4.5
+                  </div>
+                </div>
+                <p className="text-xs text-gray-500 font-medium truncate">Restaurant</p>
+              </div>
+            </div>
+          );
+        })}
       </div>
 
       <button 

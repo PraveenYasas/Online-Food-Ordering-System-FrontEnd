@@ -26,6 +26,7 @@ export default function Home() {
             setSelectedShop(shop);
             setSelectedCategory('All'); 
           }} 
+          userId={4}
         />
       </div>
       
