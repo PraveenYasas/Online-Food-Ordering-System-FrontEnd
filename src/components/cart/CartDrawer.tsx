@@ -29,7 +29,6 @@ function CartDrawer({ isOpen, onClose, currentAddress, onAddressChange }: CartDr
     setIsEditingAddress(true);
   };
 
-  // Save බටන් එක එබුවම වෙන දේ
   const handleSaveAddress = () => {
     onAddressChange(tempAddress); 
     setIsEditingAddress(false);
