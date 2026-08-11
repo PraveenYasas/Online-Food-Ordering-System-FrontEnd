@@ -3,7 +3,7 @@ import React, { useRef, useState, useEffect } from 'react';
 interface ShopsSectionProps {
   selectedShop: string;
   onSelectShop: (shop: string) => void;
-  userId: number; // 🔥 ලොග් වෙලා ඉන්න User ගේ ID එක 
+  userId: number;
 }
 
 interface RestaurantDTO {
@@ -12,7 +12,7 @@ interface RestaurantDTO {
   address: string;
   contactNumber: string;
   imageUrl?: string;
-  // type, rating, time වගේ දේවල් දැනට DB එකේ නැති නිසා අපි dummy වගේ පෙන්නමු නැත්නම් ඔයාට පස්සේ DB එකට add කරන්න පුළුවන්.
+  
 }
 
 function ShopsSection({ selectedShop, onSelectShop, userId }: ShopsSectionProps) {
@@ -21,13 +21,11 @@ function ShopsSection({ selectedShop, onSelectShop, userId }: ShopsSectionProps)
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
 
-  // 🔥 Real Data ගබඩා කරගන්න States
   const [restaurants, setRestaurants] = useState<RestaurantDTO[]>([]);
   const [favoriteRestaurantIds, setFavoriteRestaurantIds] = useState<number[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // 1. කඩවල් ටික ඔක්කොම අදිනවා
     fetch('http://localhost:8080/api/v1/restaurants')
       .then(res => res.json())
       .then(data => {
@@ -39,7 +37,6 @@ function ShopsSection({ selectedShop, onSelectShop, userId }: ShopsSectionProps)
         setLoading(false);
       });
 
-    // 2. User ගේ Favorite කඩවල් ටික අදිනවා (හදවත රතු කරන්න)
     if (userId) {
       fetch(`http://localhost:8080/api/v1/favorites/restaurant/${userId}`)
         .then(res => res.json())
@@ -52,9 +49,8 @@ function ShopsSection({ selectedShop, onSelectShop, userId }: ShopsSectionProps)
     }
   }, [userId]);
 
-  // 🔥 Favorite Button එක එබුවම වැඩ කරන කෑල්ල
   const toggleFavorite = (e: React.MouseEvent, restaurantId: number) => {
-    e.stopPropagation(); // 🔥 මේක දැම්මේ හදවත ක්ලික් කරාම කඩේ select වෙන එක නවත්තන්න
+    e.stopPropagation(); 
     fetch(`http://localhost:8080/api/v1/favorites/restaurant/${userId}/${restaurantId}`, { method: 'POST' })
       .then(res => {
         if (res.ok) {
@@ -126,7 +122,6 @@ function ShopsSection({ selectedShop, onSelectShop, userId }: ShopsSectionProps)
         onTouchMove={onDrag}
       >
         
-        {/* All Shops Card එක */}
         <div 
           onClick={() => onSelectShop('All Shops')}
           className={`w-260px shrink-0 flex flex-col bg-white rounded-2xl overflow-hidden transition-all duration-300 group cursor-pointer ${
@@ -144,7 +139,6 @@ function ShopsSection({ selectedShop, onSelectShop, userId }: ShopsSectionProps)
           </div>
         </div>
 
-        {/* ඩේටාබේස් එකෙන් එන Shops ටික */}
         {restaurants.map((shop) => {
           const isFavorite = favoriteRestaurantIds.includes(shop.id);
           const shopImage = shop.imageUrl 
