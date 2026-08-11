@@ -21,21 +21,20 @@ function LoginModal({ isOpen, onClose, onSwitchToSignUp }: LoginModalProps) {
     setError('');
     
     try {
-      // Send the Login Request to the Backend
       const response = await api.post('/auth/login', { email, password });
       
-      // Catch Token and Role
-      const token = response.data.token;
-      const role = response.data.role; // Backend should return the user's role upon successful login
+      const { token, role, firstName, lastName, email: userEmail, phone } = response.data;
 
-      // Save in LocalStorage for future requests
       localStorage.setItem("token", token); 
       localStorage.setItem("role", role);
+      localStorage.setItem("firstName", firstName || '');
+      localStorage.setItem("lastName", lastName || '');
+      localStorage.setItem("email", userEmail || '');
+      localStorage.setItem("phone", phone || '');
 
-      // If the Role is ADMIN or RESTURANT_OWNER, redirect to the respective dashboard, otherwise reload the page
-      if (role === 'ADMIN') {
+      if (role === 'ADMIN' || role === 'ROLE_ADMIN') {
         window.location.href = '/admin';
-      } else if (role === 'RESTURANT_OWNER') {
+      } else if (role === 'RESTURANT_OWNER' || role === 'ROLE_RESTURANT_OWNER') {
         window.location.href = '/shop-admin';
       } else {
         window.location.reload(); 

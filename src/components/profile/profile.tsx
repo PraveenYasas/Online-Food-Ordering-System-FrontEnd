@@ -4,8 +4,13 @@ import { Link } from 'react-router-dom';
 function Profile() {
   const [activeTab, setActiveTab] = useState<'personal' | 'addresses' | 'payments'>('personal');
 
+  const [firstName, setFirstName] = useState(localStorage.getItem('firstName') || '');
+  const [lastName, setLastName] = useState(localStorage.getItem('lastName') || '');
+  const [userEmail, setUserEmail] = useState(localStorage.getItem('email') || '');
+  const [phone, setPhone] = useState(localStorage.getItem('phone') || '');
+
   const handleLogout = () => {
-    localStorage.removeItem("token");
+    localStorage.clear(); 
     window.location.href = "/"; 
   };
 
@@ -13,9 +18,7 @@ function Profile() {
     <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-12">
       <div className="max-w-6xl mx-auto">
         
-        {/* --- Header with Back Button --- */}
         <div className="flex items-center gap-4 mb-8">
-          {/* Back Button */}
           <Link to="/" className="p-2.5 bg-white border border-gray-200 hover:bg-gray-100 rounded-full transition-colors shadow-sm group">
             <svg className="w-6 h-6 text-gray-700 group-hover:text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -26,56 +29,36 @@ function Profile() {
 
         <div className="flex flex-col md:flex-row gap-8">
           
-          {/* ================= LEFT SIDEBAR ================= */}
           <div className="w-full md:w-1/3 lg:w-1/4 flex flex-col gap-4 shrink-0">
-            
-            {/* Profile Avatar Card */}
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-col items-center text-center relative">
               <button className="absolute top-4 right-4 p-2 text-gray-400 hover:text-[#34A853] transition-colors rounded-full hover:bg-gray-50">
                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
               </button>
-              <div className="w-24 h-24 bg-[#e6f4ea] text-[#34A853] rounded-full flex items-center justify-center text-4xl font-bold mb-4 shadow-inner relative group cursor-pointer">
-                P
+              <div className="w-24 h-24 bg-[#e6f4ea] text-[#34A853] rounded-full flex items-center justify-center text-4xl font-bold mb-4 shadow-inner relative group cursor-pointer uppercase">
+                {firstName ? firstName.charAt(0) : 'U'}
                 <div className="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                   <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
                 </div>
               </div>
-              <h2 className="text-xl font-bold text-gray-900">Praween Yasas</h2>
-              <p className="text-gray-500 text-sm mt-1">praween@example.com</p>
+              <h2 className="text-xl font-bold text-gray-900">{firstName} {lastName}</h2>
+              <p className="text-gray-500 text-sm mt-1">{userEmail}</p>
             </div>
 
-            {/* Navigation Menu */}
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-3 flex flex-col gap-1">
-              <button 
-                onClick={() => setActiveTab('personal')} 
-                className={`flex items-center gap-3 px-4 py-3.5 rounded-xl font-semibold transition-colors ${activeTab === 'personal' ? 'bg-[#e6f4ea] text-[#34A853]' : 'text-gray-600 hover:bg-gray-50'}`}
-              >
+              <button onClick={() => setActiveTab('personal')} className={`flex items-center gap-3 px-4 py-3.5 rounded-xl font-semibold transition-colors ${activeTab === 'personal' ? 'bg-[#e6f4ea] text-[#34A853]' : 'text-gray-600 hover:bg-gray-50'}`}>
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
                 Personal Info
               </button>
-              
-              <button 
-                onClick={() => setActiveTab('addresses')} 
-                className={`flex items-center gap-3 px-4 py-3.5 rounded-xl font-semibold transition-colors ${activeTab === 'addresses' ? 'bg-[#e6f4ea] text-[#34A853]' : 'text-gray-600 hover:bg-gray-50'}`}
-              >
+              <button onClick={() => setActiveTab('addresses')} className={`flex items-center gap-3 px-4 py-3.5 rounded-xl font-semibold transition-colors ${activeTab === 'addresses' ? 'bg-[#e6f4ea] text-[#34A853]' : 'text-gray-600 hover:bg-gray-50'}`}>
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0zM15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
                 Saved Addresses
               </button>
-
-              <button 
-                onClick={() => setActiveTab('payments')} 
-                className={`flex items-center gap-3 px-4 py-3.5 rounded-xl font-semibold transition-colors ${activeTab === 'payments' ? 'bg-[#e6f4ea] text-[#34A853]' : 'text-gray-600 hover:bg-gray-50'}`}
-              >
+              <button onClick={() => setActiveTab('payments')} className={`flex items-center gap-3 px-4 py-3.5 rounded-xl font-semibold transition-colors ${activeTab === 'payments' ? 'bg-[#e6f4ea] text-[#34A853]' : 'text-gray-600 hover:bg-gray-50'}`}>
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>
                 Payment Methods
               </button>
-
-              {/* Logout Button in Profile Menu */}
               <div className="border-t border-gray-100 mt-2 pt-2">
-                <button 
-                  onClick={handleLogout}
-                  className="flex items-center w-full gap-3 px-4 py-3.5 rounded-xl font-semibold text-red-600 hover:bg-red-50 transition-colors"
-                >
+                <button onClick={handleLogout} className="flex items-center w-full gap-3 px-4 py-3.5 rounded-xl font-semibold text-red-600 hover:bg-red-50 transition-colors">
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
                   Log out
                 </button>
@@ -83,11 +66,9 @@ function Profile() {
             </div>
           </div>
 
-          {/* ================= RIGHT CONTENT AREA ================= */}
           <div className="w-full md:w-2/3 lg:w-3/4">
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8 min-h-125">
               
-              {/* 1. Personal Info Tab */}
               {activeTab === 'personal' && (
                 <div className="animate-fade-in">
                   <div className="flex items-center justify-between mb-6">
@@ -97,20 +78,20 @@ function Profile() {
                   <form className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                       <label className="block text-sm font-semibold text-gray-800 mb-2">First Name</label>
-                      <input type="text" defaultValue="Praween" className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:border-[#34A853] focus:ring-1 focus:ring-[#34A853] transition-colors" />
+                      <input type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:border-[#34A853] focus:ring-1 focus:ring-[#34A853] transition-colors" />
                     </div>
                     <div>
                       <label className="block text-sm font-semibold text-gray-800 mb-2">Last Name</label>
-                      <input type="text" defaultValue="Yasas" className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:border-[#34A853] focus:ring-1 focus:ring-[#34A853] transition-colors" />
+                      <input type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:border-[#34A853] focus:ring-1 focus:ring-[#34A853] transition-colors" />
                     </div>
                     <div>
                       <label className="block text-sm font-semibold text-gray-800 mb-2">Email Address</label>
-                      <input type="email" defaultValue="praween@example.com" className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:border-[#34A853] focus:ring-1 focus:ring-[#34A853] transition-colors bg-gray-50 text-gray-600" readOnly />
+                      <input type="email" value={userEmail} className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:border-[#34A853] focus:ring-1 focus:ring-[#34A853] transition-colors bg-gray-50 text-gray-600" readOnly />
                       <p className="text-xs text-gray-500 mt-1.5">Email address cannot be changed.</p>
                     </div>
                     <div>
                       <label className="block text-sm font-semibold text-gray-800 mb-2">Phone Number</label>
-                      <input type="tel" defaultValue="+94 77 123 4567" className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:border-[#34A853] focus:ring-1 focus:ring-[#34A853] transition-colors" />
+                      <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:border-[#34A853] focus:ring-1 focus:ring-[#34A853] transition-colors" />
                     </div>
                     <div className="md:col-span-2 pt-4">
                       <button type="button" className="bg-[#34A853] hover:bg-[#2b8f45] text-white font-bold py-3 px-8 rounded-xl transition-colors shadow-sm">
@@ -196,7 +177,6 @@ function Profile() {
 
             </div>
           </div>
-
         </div>
       </div>
     </div>
