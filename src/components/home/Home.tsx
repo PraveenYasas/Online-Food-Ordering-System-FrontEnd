@@ -5,7 +5,11 @@ import ShopsSection from "./ShopsSection";
 import CategorySection from "./CategorySection";
 import FoodItemsSection from "./FoodItemsSection";
 
-export default function Home() {
+interface HomeProps {
+  searchQuery?: string;
+}
+
+export default function Home({ searchQuery = '' }: HomeProps) {
   const [selectedShop, setSelectedShop] = useState('All Shops');
   const [selectedCategory, setSelectedCategory] = useState('All');
   
@@ -27,6 +31,7 @@ export default function Home() {
             setSelectedCategory('All'); 
           }} 
           userId={currentUserId}
+          searchQuery={searchQuery}
         />
       </div>
       
@@ -42,6 +47,7 @@ export default function Home() {
           selectedCategory={selectedCategory} 
           selectedShop={selectedShop} 
           userId={currentUserId}
+          searchQuery={searchQuery}
         />
       </div>
       

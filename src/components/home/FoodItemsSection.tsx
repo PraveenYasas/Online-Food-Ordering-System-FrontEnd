@@ -4,7 +4,8 @@ import { useCart } from '../cart/CartContext';
 interface FoodItemsSectionProps {
   selectedCategory: string;
   selectedShop: string;
-  userId: number; 
+  userId: number;
+  searchQuery: string;
 }
 
 interface FoodItemDTO {
@@ -28,7 +29,7 @@ interface RestaurantDTO {
   name: string;
 }
 
-function FoodItemsSection({ selectedCategory, selectedShop, userId }: FoodItemsSectionProps) {
+function FoodItemsSection({ selectedCategory, selectedShop, userId, searchQuery }: FoodItemsSectionProps) {
   const { addToCart } = useCart();
   
   const [foods, setFoods] = useState<FoodItemDTO[]>([]);
@@ -38,49 +39,28 @@ function FoodItemsSection({ selectedCategory, selectedShop, userId }: FoodItemsS
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('http://localhost:8080/api/v1/categories')
-      .then(res => res.json())
-      .then(data => { if (Array.isArray(data)) setCategories(data); })
-      .catch(err => console.error(err));
-
-    fetch('http://localhost:8080/api/v1/restaurants')
-      .then(res => res.json())
-      .then(data => { if (Array.isArray(data)) setRestaurants(data); })
-      .catch(err => console.error(err));
-
+    fetch('http://localhost:8080/api/v1/categories').then(res => res.json()).then(data => { if (Array.isArray(data)) setCategories(data); }).catch(err => console.error(err));
+    fetch('http://localhost:8080/api/v1/restaurants').then(res => res.json()).then(data => { if (Array.isArray(data)) setRestaurants(data); }).catch(err => console.error(err));
+    
     fetch('http://localhost:8080/api/v1/food-items')
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data)) setFoods(data);
         setLoading(false);
       })
-      .catch(err => {
-        console.error(err);
-        setLoading(false);
-      });
+      .catch(err => { console.error(err); setLoading(false); });
 
     if (userId) {
-      fetch(`http://localhost:8080/api/v1/favorites/food/${userId}`)
-        .then(res => res.json())
-        .then(data => {
-          if (Array.isArray(data)) {
-            setFavoriteFoodIds(data.map((fav: any) => fav.foodItem.id));
-          }
-        })
-        .catch(err => console.error(err));
+      fetch(`http://localhost:8080/api/v1/favorites/food/${userId}`).then(res => res.json()).then(data => {
+        if (Array.isArray(data)) { setFavoriteFoodIds(data.map((fav: any) => fav.foodItem.id)); }
+      }).catch(err => console.error(err));
     }
   }, [userId]);
 
   const toggleFavorite = (foodId: number) => {
-    fetch(`http://localhost:8080/api/v1/favorites/food/${userId}/${foodId}`, { method: 'POST' })
-      .then(res => {
-        if (res.ok) {
-          setFavoriteFoodIds(prev => 
-            prev.includes(foodId) ? prev.filter(id => id !== foodId) : [...prev, foodId]
-          );
-        }
-      })
-      .catch(err => console.error("Error toggling favorite:", err));
+    fetch(`http://localhost:8080/api/v1/favorites/food/${userId}/${foodId}`, { method: 'POST' }).then(res => {
+      if (res.ok) { setFavoriteFoodIds(prev => prev.includes(foodId) ? prev.filter(id => id !== foodId) : [...prev, foodId]); }
+    }).catch(err => console.error("Error toggling favorite:", err));
   };
 
   const getCategoryName = (id: number) => {
@@ -97,12 +77,13 @@ function FoodItemsSection({ selectedCategory, selectedShop, userId }: FoodItemsS
       const selectedRestaurantObj = restaurants.find(r => r.name === selectedShop);
       if (selectedRestaurantObj) {
         matchShop = food.restaurantId === selectedRestaurantObj.id || food.restaurant?.id === selectedRestaurantObj.id;
-      } else {
-        matchShop = false; 
-      }
+      } else { matchShop = false; }
     }
 
-    return matchCategory && matchShop;
+    const matchSearch = food.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                        (food.description && food.description.toLowerCase().includes(searchQuery.toLowerCase()));
+
+    return matchCategory && matchShop && matchSearch;
   });
 
   if (loading) return ( <div className="w-full py-20 flex justify-center items-center bg-gray-50"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#34A853]"></div></div> );
@@ -111,7 +92,7 @@ function FoodItemsSection({ selectedCategory, selectedShop, userId }: FoodItemsS
     <div className="w-full py-10 px-6 sm:px-12 bg-gray-50">
       <div className="flex justify-between items-center mb-8">
         <h2 className="text-2xl font-bold text-gray-900">
-          {selectedShop === 'All Shops' ? (selectedCategory === 'All' ? 'Popular Dishes' : `${selectedCategory} Dishes`) : `${selectedShop} Menu`}
+          {searchQuery ? `Search Results for "${searchQuery}"` : (selectedShop === 'All Shops' ? (selectedCategory === 'All' ? 'Popular Dishes' : `${selectedCategory} Dishes`) : `${selectedShop} Menu`)}
         </h2>
       </div>
       
@@ -129,11 +110,8 @@ function FoodItemsSection({ selectedCategory, selectedShop, userId }: FoodItemsS
                 <div className="relative h-48 w-full overflow-hidden bg-gray-100">
                   <img src={imageUrl} alt={food.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                   <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded-md text-xs font-bold text-gray-800 shadow-sm flex items-center gap-1">⭐ 4.8</div>
-                  
                   <button onClick={() => toggleFavorite(food.id)} className="absolute top-3 right-3 bg-white p-2 rounded-full shadow text-[#d81b60] hover:bg-red-50 transition-colors cursor-pointer z-10">
-                    <svg className={`w-5 h-5 ${isFavorite ? 'fill-current' : 'fill-none'}`} stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={isFavorite ? 0 : 2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                    </svg>
+                    <svg className={`w-5 h-5 ${isFavorite ? 'fill-current' : 'fill-none'}`} stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={isFavorite ? 0 : 2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
                   </button>
                 </div>
                 
