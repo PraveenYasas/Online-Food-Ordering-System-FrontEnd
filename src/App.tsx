@@ -26,6 +26,8 @@ function App() {
   const role = localStorage.getItem('role') || '';
   const isAdmin = role === 'ADMIN' || role === 'ROLE_ADMIN';
   const isShopOwner = role === 'RESTURANT_OWNER' || role === 'ROLE_RESTURANT_OWNER';
+  
+  const currentUserId = Number(localStorage.getItem('userId')) || 0;
 
   const showCustomerLayout = !isAdmin && !isShopOwner;
 
@@ -102,7 +104,7 @@ function App() {
         />
 
         <OrdersModal isOpen={activeModal === 'orders'} onClose={closeModal} />
-        <FavoritesModal isOpen={activeModal === 'favorites'} onClose={closeModal} userId={4} />
+        <FavoritesModal isOpen={activeModal === 'favorites'} onClose={closeModal} userId={currentUserId} />
         <LoginModal isOpen={activeModal === 'login'} onClose={closeModal} onSwitchToSignUp={openSignUp} />
         <SignUpModal isOpen={activeModal === 'signup'} onClose={closeModal} onSwitchToLogin={openLogin} />
         

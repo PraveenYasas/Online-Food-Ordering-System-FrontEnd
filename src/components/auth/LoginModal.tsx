@@ -23,10 +23,11 @@ function LoginModal({ isOpen, onClose, onSwitchToSignUp }: LoginModalProps) {
     try {
       const response = await api.post('/auth/login', { email, password });
       
-      const { token, role, firstName, lastName, email: userEmail, phone } = response.data;
+      const { token, role, id, firstName, lastName, email: userEmail, phone } = response.data;
 
       localStorage.setItem("token", token); 
       localStorage.setItem("role", role);
+      localStorage.setItem("userId", id);
       localStorage.setItem("firstName", firstName || '');
       localStorage.setItem("lastName", lastName || '');
       localStorage.setItem("email", userEmail || '');

@@ -39,7 +39,13 @@ function OrdersModal({ isOpen, onClose }: OrdersModalProps) {
   const fetchMyOrders = async () => {
     setLoading(true);
     const token = localStorage.getItem('token');
-    const userId = 4;
+    
+    const userId = Number(localStorage.getItem('userId'));
+
+    if (!userId) {
+      setLoading(false);
+      return;
+    }
 
     try {
       const response = await fetch(`http://localhost:8080/api/v1/orders/user/${userId}`, {
