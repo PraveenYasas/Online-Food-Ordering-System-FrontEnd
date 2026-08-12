@@ -9,9 +9,10 @@ interface NavbarProps {
   onOpenCart: () => void;
   onOpenLocation?: () => void;
   onSearch: (query: string) => void;
+  currentAddress?: string; 
 }
 
-function Navbar({ onOpenLogin, onOpenSignUp, onOpenSidebar, onOpenCart, onOpenLocation, onSearch }: NavbarProps) {
+function Navbar({ onOpenLogin, onOpenSignUp, onOpenSidebar, onOpenCart, onOpenLocation, onSearch, currentAddress }: NavbarProps) {
   
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [orderType, setOrderType] = useState<'delivery' | 'pickup'>('delivery');
@@ -45,9 +46,14 @@ function Navbar({ onOpenLogin, onOpenSignUp, onOpenSidebar, onOpenCart, onOpenLo
           <button onClick={() => setOrderType('delivery')} className={`px-5 py-2 rounded-full font-semibold text-sm transition-all duration-300 ease-in-out cursor-pointer ${orderType === 'delivery' ? 'bg-white shadow-sm text-black' : 'text-gray-600 hover:text-black'}`}>Delivery</button>
           <button onClick={() => setOrderType('pickup')} className={`px-5 py-2 rounded-full font-semibold text-sm transition-all duration-300 ease-in-out cursor-pointer ${orderType === 'pickup' ? 'bg-white shadow-sm text-black' : 'text-gray-600 hover:text-black'}`}>Pickup</button>
         </div>
+        
         <div onClick={onOpenLocation} className="flex items-center gap-2 hover:bg-gray-100 px-3 py-2 rounded-full cursor-pointer transition-colors">
           <svg className="w-5 h-5 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-          <span className="font-medium text-sm text-black">Upazil Hardware • Now</span>
+          
+          <span className="font-medium text-sm text-black truncate max-w-37.5">
+            {currentAddress ? `${currentAddress.split(',')[0]} • Now` : 'Select Location'}
+          </span>
+          
           <svg className="w-4 h-4 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
         </div>
       </div>
@@ -57,12 +63,7 @@ function Navbar({ onOpenLogin, onOpenSignUp, onOpenSidebar, onOpenCart, onOpenLo
         
         <div className="hidden md:flex items-center bg-gray-100 rounded-full px-4 py-2 w-50 lg:w-64">
           <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-          <input 
-            type="text" 
-            placeholder="Search food or shops..." 
-            onChange={(e) => onSearch(e.target.value)}
-            className="bg-transparent outline-none ml-2 w-full text-sm placeholder-gray-500 text-black" 
-          />
+          <input type="text" placeholder="Search food or shops..." onChange={(e) => onSearch(e.target.value)} className="bg-transparent outline-none ml-2 w-full text-sm placeholder-gray-500 text-black" />
         </div>
 
         {isLoggedIn ? (

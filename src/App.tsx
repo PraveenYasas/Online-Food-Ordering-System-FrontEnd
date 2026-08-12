@@ -53,6 +53,7 @@ function App() {
             onOpenCart={openCart}
             onOpenLocation={openLocation}
             onSearch={setSearchQuery} 
+            currentAddress={deliveryAddress}
           />
         )}
         
