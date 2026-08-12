@@ -15,7 +15,7 @@ function CartDrawer({ isOpen, onClose, currentAddress, onAddressChange }: CartDr
   const [isEditingAddress, setIsEditingAddress] = useState(false);
   const [tempAddress, setTempAddress] = useState("");
 
-  const { cartItems, cartTotal, removeFromCart } = useCart();
+  const { cartItems, cartTotal, removeFromCart, decreaseQuantity, addToCart } = useCart();
 
   const isEmpty = cartItems.length === 0;
 
@@ -109,15 +109,41 @@ function CartDrawer({ isOpen, onClose, currentAddress, onAddressChange }: CartDr
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg> Order Items
               </h4>
 
-              {/* Dynamic Items List */}
+              {/* 🔥 Dynamic Items List (Aluth UI Eka) */}
               <div className="flex flex-col gap-4 mb-2">
                 {cartItems.map((item) => (
-                  <div key={item.id} className="flex justify-between items-center">
-                    <div>
-                      <p className="font-semibold text-gray-900">{item.name} x {item.quantity}</p>
-                      <button onClick={() => removeFromCart(item.id)} className="text-xs text-red-500 hover:underline">Remove</button>
+                  <div key={item.id} className="flex justify-between items-center bg-gray-50 p-3 rounded-xl border border-gray-100">
+                    <div className="flex flex-col gap-1">
+                      <p className="font-bold text-gray-900">{item.name}</p>
+                      <p className="font-medium text-gray-500 text-sm">LKR {item.price.toFixed(2)}</p>
                     </div>
-                    <p className="font-medium text-gray-900">LKR {(item.price * item.quantity).toFixed(2)}</p>
+                    
+                    <div className="flex items-center gap-3">
+                      {/* Plus/Minus Buttons */}
+                      <div className="flex items-center bg-white border border-gray-200 rounded-lg shadow-sm">
+                        <button 
+                          onClick={() => decreaseQuantity(item.id)}
+                          className="w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-100 hover:text-black transition-colors rounded-l-lg"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" /></svg>
+                        </button>
+                        <span className="w-8 text-center font-bold text-gray-900 text-sm">{item.quantity}</span>
+                        <button 
+                          onClick={() => addToCart(item)}
+                          className="w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-100 hover:text-black transition-colors rounded-r-lg"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
+                        </button>
+                      </div>
+                      
+                      {/* Trash Button */}
+                      <button 
+                        onClick={() => removeFromCart(item.id)} 
+                        className="w-8 h-8 flex items-center justify-center text-red-400 hover:bg-red-50 hover:text-red-600 rounded-lg transition-colors"
+                      >
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>
