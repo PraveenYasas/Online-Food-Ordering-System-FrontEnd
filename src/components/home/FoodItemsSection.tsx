@@ -13,10 +13,17 @@ interface FoodItemDTO {
   description: string;
   price: number;
   categoryId: number;
+  restaurantId?: number; 
+  restaurant?: any; 
   imageUrl?: string;
 }
 
 interface CategoryDTO {
+  id: number;
+  name: string;
+}
+
+interface RestaurantDTO {
   id: number;
   name: string;
 }
@@ -26,6 +33,7 @@ function FoodItemsSection({ selectedCategory, selectedShop, userId }: FoodItemsS
   
   const [foods, setFoods] = useState<FoodItemDTO[]>([]);
   const [categories, setCategories] = useState<CategoryDTO[]>([]);
+  const [restaurants, setRestaurants] = useState<RestaurantDTO[]>([]);
   const [favoriteFoodIds, setFavoriteFoodIds] = useState<number[]>([]); 
   const [loading, setLoading] = useState(true);
 
@@ -33,6 +41,11 @@ function FoodItemsSection({ selectedCategory, selectedShop, userId }: FoodItemsS
     fetch('http://localhost:8080/api/v1/categories')
       .then(res => res.json())
       .then(data => { if (Array.isArray(data)) setCategories(data); })
+      .catch(err => console.error(err));
+
+    fetch('http://localhost:8080/api/v1/restaurants')
+      .then(res => res.json())
+      .then(data => { if (Array.isArray(data)) setRestaurants(data); })
       .catch(err => console.error(err));
 
     fetch('http://localhost:8080/api/v1/food-items')
@@ -78,7 +91,17 @@ function FoodItemsSection({ selectedCategory, selectedShop, userId }: FoodItemsS
   const filteredFoods = foods.filter(food => {
     const catName = getCategoryName(food.categoryId);
     const matchCategory = selectedCategory === 'All' || catName === selectedCategory;
-    const matchShop = selectedShop === 'All Shops' || true; 
+    
+    let matchShop = true;
+    if (selectedShop !== 'All Shops') {
+      const selectedRestaurantObj = restaurants.find(r => r.name === selectedShop);
+      if (selectedRestaurantObj) {
+        matchShop = food.restaurantId === selectedRestaurantObj.id || food.restaurant?.id === selectedRestaurantObj.id;
+      } else {
+        matchShop = false; 
+      }
+    }
+
     return matchCategory && matchShop;
   });
 
@@ -88,7 +111,7 @@ function FoodItemsSection({ selectedCategory, selectedShop, userId }: FoodItemsS
     <div className="w-full py-10 px-6 sm:px-12 bg-gray-50">
       <div className="flex justify-between items-center mb-8">
         <h2 className="text-2xl font-bold text-gray-900">
-          {selectedShop === 'All Shops' ? (selectedCategory === 'All' ? 'Popular Dishes' : `${selectedCategory} Dishes`) : `Menu`}
+          {selectedShop === 'All Shops' ? (selectedCategory === 'All' ? 'Popular Dishes' : `${selectedCategory} Dishes`) : `${selectedShop} Menu`}
         </h2>
       </div>
       
