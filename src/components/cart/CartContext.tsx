@@ -6,6 +6,8 @@ export interface CartItem {
     price: number;
     quantity: number;
     image: string;
+    restaurantId: number;
+    restaurantName: string;
 }
 
 interface CartContextType {
@@ -24,6 +26,18 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
     const addToCart = (newItem: CartItem) => {
         setCartItems((prevItems) => {
+            if (prevItems.length > 0 && prevItems[0].restaurantId !== newItem.restaurantId) {
+                const confirmClear = window.confirm(
+                    `Your cart contains items from "${prevItems[0].restaurantName}".\n\nDo you want to clear your cart and add items from "${newItem.restaurantName}" instead?`
+                );
+                
+                if (confirmClear) {
+                    return [{ ...newItem, quantity: 1 }];
+                } else {
+                    return prevItems; 
+                }
+            }
+
             const existingItem = prevItems.find(item => item.id === newItem.id);
             if (existingItem) {
                 return prevItems.map(item =>

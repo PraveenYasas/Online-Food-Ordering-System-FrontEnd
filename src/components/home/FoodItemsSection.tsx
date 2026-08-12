@@ -143,7 +143,23 @@ function FoodItemsSection({ selectedCategory, selectedShop, userId }: FoodItemsS
                   <p className="text-gray-500 text-sm mb-4 line-clamp-2">{food.description}</p>
                   <div className="mt-auto flex items-center justify-between">
                     <span className="text-lg font-black text-gray-900">LKR {food.price.toFixed(2)}</span>
-                    <button onClick={() => addToCart({ id: food.id, name: food.name, price: food.price, quantity: 1, image: imageUrl })} className="bg-[#34A853] hover:bg-[#2b8f45] text-white p-2.5 rounded-xl transition-colors shadow-md">
+                    <button 
+                      onClick={() => {
+                        const currentRestaurantId = food.restaurantId || food.restaurant?.id || 0;
+                        const currentRestaurantName = restaurants.find(r => r.id === currentRestaurantId)?.name || 'Unknown Restaurant';
+                        
+                        addToCart({ 
+                          id: food.id, 
+                          name: food.name, 
+                          price: food.price, 
+                          quantity: 1, 
+                          image: imageUrl,
+                          restaurantId: currentRestaurantId,
+                          restaurantName: currentRestaurantName
+                        });
+                      }} 
+                      className="bg-[#34A853] hover:bg-[#2b8f45] text-white p-2.5 rounded-xl transition-colors shadow-md"
+                    >
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
                     </button>
                   </div>

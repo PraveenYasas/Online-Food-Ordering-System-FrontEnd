@@ -31,19 +31,22 @@ function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
   const promoDiscount = 5.00;
   const finalTotal = cartTotal > 0 ? (cartTotal + serviceFee + tax - promoDiscount) : 0;
 
-  const handleCheckout = async () => {
+const handleCheckout = async () => {
     const token = localStorage.getItem('token');
-    
-    if (!token) {
+    const userId = Number(localStorage.getItem('userId')); // 🔥 Hardcode කරපු 4 අයින් කරලා ඇත්ත ID එක ගත්තා
+
+    if (!token || !userId) {
       alert("Please login first to place an order!");
       return;
     }
 
+    const currentRestaurantName = cartItems.length > 0 ? cartItems[0].restaurantName : "Unknown";
+
     const orderData = {
-      userId: 4,
+      userId: userId,
       totalAmount: finalTotal,
       status: "Pending",
-      restaurantName: "C Foods", 
+      restaurantName: currentRestaurantName,
       deliveryAddress: deliveryInfo.address,
       arrivalTime: "25-35 min",
 
@@ -56,7 +59,7 @@ function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
     };
 
     try {
-      const response = await fetch('http://localhost:8080/api/v1/orders', { 
+      const response = await fetch('http://localhost:8080/api/v1/orders', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -92,7 +95,6 @@ function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
       <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden flex flex-col min-h-300px max-h-[90vh] transition-all duration-300">
         
         {isSuccess ? (
-          // ================= SUCCESS MESSAGE UI =================
           <div className="p-10 flex flex-col items-center justify-center text-center h-full animate-fade-in my-auto">
             <div className="w-24 h-24 bg-[#e6f4ea] rounded-full flex items-center justify-center mb-6 shadow-inner">
               <svg className="w-12 h-12 text-[#34A853]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -104,7 +106,6 @@ function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
             <div className="w-8 h-8 border-4 border-[#34A853] border-t-transparent rounded-full animate-spin"></div>
           </div>
         ) : (
-          // ================= CHECKOUT FORM UI =================
           <>
             {/* Header */}
             <div className="bg-[#34A853] p-5 text-white flex justify-between items-center shrink-0">
