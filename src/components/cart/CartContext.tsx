@@ -17,12 +17,15 @@ interface CartContextType {
     removeFromCart: (id: number) => void;
     clearCart: () => void;
     cartTotal: number;
+    orderType: 'delivery' | 'pickup'; 
+    setOrderType: (type: 'delivery' | 'pickup') => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export function CartProvider({ children }: { children: ReactNode }) {
     const [cartItems, setCartItems] = useState<CartItem[]>([]);
+    const [orderType, setOrderType] = useState<'delivery' | 'pickup'>('delivery');
 
     const addToCart = (newItem: CartItem) => {
         setCartItems((prevItems) => {
@@ -71,7 +74,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     const cartTotal = cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
 
     return (
-        <CartContext.Provider value={{ cartItems, addToCart, decreaseQuantity, removeFromCart, clearCart, cartTotal }}>
+        <CartContext.Provider value={{ cartItems, addToCart, decreaseQuantity, removeFromCart, clearCart, cartTotal, orderType, setOrderType }}>
             {children}
         </CartContext.Provider>
     );

@@ -15,11 +15,12 @@ function CartDrawer({ isOpen, onClose, currentAddress, onAddressChange }: CartDr
   const [isEditingAddress, setIsEditingAddress] = useState(false);
   const [tempAddress, setTempAddress] = useState("");
 
-  const { cartItems, cartTotal, removeFromCart, decreaseQuantity, addToCart } = useCart();
+  const { cartItems, cartTotal, removeFromCart, decreaseQuantity, addToCart, orderType } = useCart();
 
   const isEmpty = cartItems.length === 0;
+  const currentRestaurantName = cartItems.length > 0 ? cartItems[0].restaurantName : "Unknown";
 
-  const serviceFee = 2.50;
+  const serviceFee = orderType === 'delivery' ? 2.50 : 0.00; 
   const tax = cartTotal * 0.08; 
   const promoDiscount = 5.00;
   const finalTotal = cartTotal > 0 ? (cartTotal + serviceFee + tax - promoDiscount) : 0;
@@ -51,10 +52,11 @@ function CartDrawer({ isOpen, onClose, currentAddress, onAddressChange }: CartDr
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
           </button>
           <h2 className="text-2xl font-bold tracking-tight">Your Cart</h2>
-          <p className="text-white/90 text-sm mt-1">{isEmpty ? '0 items' : `${cartItems.length} item(s)`} • C Foods</p>
+          <p className="text-white/90 text-sm mt-1">{isEmpty ? '0 items' : `${cartItems.length} item(s)`} • {currentRestaurantName}</p>
           {!isEmpty && (
             <div className="mt-4 bg-white/20 rounded-lg p-3 flex items-center gap-2 text-sm font-medium">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg> Delivery in 25-35 min
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg> 
+              {orderType === 'delivery' ? 'Delivery in 25-35 min' : 'Ready for Pickup in 15-20 min'} {/* 🔥 */}
             </div>
           )}
         </div>
@@ -73,43 +75,54 @@ function CartDrawer({ isOpen, onClose, currentAddress, onAddressChange }: CartDr
           ) : (
             <div className="p-6 flex flex-col gap-6">
               
-              {/* Delivery Address Box */}
-              <div className="border border-gray-200 rounded-xl p-4 flex gap-4">
-                <div className="w-10 h-10 bg-[#e6f4ea] rounded-full flex items-center justify-center shrink-0">
-                  <svg className="w-5 h-5 text-[#137333]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0zM15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-                </div>
-                <div className="flex-1">
-                  <h4 className="font-bold text-gray-900">Delivery Address</h4>
-                  
-                  {isEditingAddress ? (
-                    <div className="mt-2 flex flex-col gap-2">
-                      <input 
-                        type="text" 
-                        value={tempAddress}
-                        onChange={(e) => setTempAddress(e.target.value)}
-                        className="w-full px-3 py-1.5 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-[#34A853]"
-                        autoFocus
-                      />
-                      <div className="flex gap-2">
-                        <button onClick={handleSaveAddress} className="bg-[#34A853] text-white px-3 py-1 rounded text-xs font-bold transition-colors hover:bg-[#2b8f45]">Save</button>
-                        <button onClick={() => setIsEditingAddress(false)} className="bg-gray-200 text-gray-700 px-3 py-1 rounded text-xs font-bold transition-colors hover:bg-gray-300">Cancel</button>
+              {/* Delivery Address Box - Hide if Pickup */}
+              {orderType === 'delivery' ? (
+                <div className="border border-gray-200 rounded-xl p-4 flex gap-4">
+                  <div className="w-10 h-10 bg-[#e6f4ea] rounded-full flex items-center justify-center shrink-0">
+                    <svg className="w-5 h-5 text-[#137333]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0zM15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                  </div>
+                  <div className="flex-1">
+                    <h4 className="font-bold text-gray-900">Delivery Address</h4>
+                    
+                    {isEditingAddress ? (
+                      <div className="mt-2 flex flex-col gap-2">
+                        <input 
+                          type="text" 
+                          value={tempAddress}
+                          onChange={(e) => setTempAddress(e.target.value)}
+                          className="w-full px-3 py-1.5 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-[#34A853]"
+                          autoFocus
+                        />
+                        <div className="flex gap-2">
+                          <button onClick={handleSaveAddress} className="bg-[#34A853] text-white px-3 py-1 rounded text-xs font-bold transition-colors hover:bg-[#2b8f45]">Save</button>
+                          <button onClick={() => setIsEditingAddress(false)} className="bg-gray-200 text-gray-700 px-3 py-1 rounded text-xs font-bold transition-colors hover:bg-gray-300">Cancel</button>
+                        </div>
                       </div>
-                    </div>
-                  ) : (
-                    <>
-                      <p className="text-sm text-gray-600 mt-0.5">{currentAddress}</p>
-                      <button onClick={handleEditClick} className="text-[#34A853] font-semibold text-sm mt-1 hover:underline">Change</button>
-                    </>
-                  )}
+                    ) : (
+                      <>
+                        <p className="text-sm text-gray-600 mt-0.5">{currentAddress}</p>
+                        <button onClick={handleEditClick} className="text-[#34A853] font-semibold text-sm mt-1 hover:underline">Change</button>
+                      </>
+                    )}
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <div className="border border-[#34A853]/30 bg-[#e6f4ea]/50 rounded-xl p-4 flex gap-4">
+                  <div className="w-10 h-10 bg-[#e6f4ea] rounded-full flex items-center justify-center shrink-0">
+                    <svg className="w-5 h-5 text-[#137333]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
+                  </div>
+                  <div className="flex-1">
+                    <h4 className="font-bold text-[#137333]">Store Pickup</h4>
+                    <p className="text-sm text-gray-600 mt-0.5">Collect your order at {currentRestaurantName}</p>
+                  </div>
+                </div>
+              )}
 
               {/* Order Items Header */}
               <h4 className="font-bold text-lg flex items-center gap-2 text-gray-900 mt-2">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg> Order Items
               </h4>
 
-              {/* 🔥 Dynamic Items List (Aluth UI Eka) */}
               <div className="flex flex-col gap-4 mb-2">
                 {cartItems.map((item) => (
                   <div key={item.id} className="flex justify-between items-center bg-gray-50 p-3 rounded-xl border border-gray-100">
@@ -119,30 +132,12 @@ function CartDrawer({ isOpen, onClose, currentAddress, onAddressChange }: CartDr
                     </div>
                     
                     <div className="flex items-center gap-3">
-                      {/* Plus/Minus Buttons */}
                       <div className="flex items-center bg-white border border-gray-200 rounded-lg shadow-sm">
-                        <button 
-                          onClick={() => decreaseQuantity(item.id)}
-                          className="w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-100 hover:text-black transition-colors rounded-l-lg"
-                        >
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" /></svg>
-                        </button>
+                        <button onClick={() => decreaseQuantity(item.id)} className="w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-100 hover:text-black transition-colors rounded-l-lg"><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" /></svg></button>
                         <span className="w-8 text-center font-bold text-gray-900 text-sm">{item.quantity}</span>
-                        <button 
-                          onClick={() => addToCart(item)}
-                          className="w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-100 hover:text-black transition-colors rounded-r-lg"
-                        >
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
-                        </button>
+                        <button onClick={() => addToCart(item)} className="w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-100 hover:text-black transition-colors rounded-r-lg"><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg></button>
                       </div>
-                      
-                      {/* Trash Button */}
-                      <button 
-                        onClick={() => removeFromCart(item.id)} 
-                        className="w-8 h-8 flex items-center justify-center text-red-400 hover:bg-red-50 hover:text-red-600 rounded-lg transition-colors"
-                      >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                      </button>
+                      <button onClick={() => removeFromCart(item.id)} className="w-8 h-8 flex items-center justify-center text-red-400 hover:bg-red-50 hover:text-red-600 rounded-lg transition-colors"><svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button>
                     </div>
                   </div>
                 ))}
@@ -153,7 +148,7 @@ function CartDrawer({ isOpen, onClose, currentAddress, onAddressChange }: CartDr
               {/* Dynamic Receipt Breakdown */}
               <div className="flex flex-col gap-3">
                 <div className="flex justify-between text-[15px] text-gray-600"><span>Subtotal</span><span className="font-semibold text-gray-900">LKR {cartTotal.toFixed(2)}</span></div>
-                <div className="flex justify-between text-[15px] text-gray-600"><span>Delivery Fee</span><span className="font-semibold text-[#34A853]">FREE</span></div>
+                {orderType === 'delivery' && <div className="flex justify-between text-[15px] text-gray-600"><span>Delivery Fee</span><span className="font-semibold text-[#34A853]">FREE</span></div>}
                 <div className="flex justify-between text-[15px] text-gray-600"><span>Service Fee</span><span className="font-semibold text-gray-900">LKR {serviceFee.toFixed(2)}</span></div>
                 <div className="flex justify-between text-[15px] text-gray-600"><span>Tax (8%)</span><span className="font-semibold text-gray-900">LKR {tax.toFixed(2)}</span></div>
                 <div className="flex justify-between text-[15px] text-[#34A853] font-medium"><span>Promo Discount</span><span>-LKR {promoDiscount.toFixed(2)}</span></div>
