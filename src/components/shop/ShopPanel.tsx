@@ -18,7 +18,7 @@ export default function ShopPanel() {
     window.location.reload();
   };
 
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'orders' | 'menu'>('orders');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'orders' | 'menu'>('menu'); // Load වෙද්දිම Menu එක පේන්න හැදුවා
   const [isAcceptSuccessOpen, setIsAcceptSuccessOpen] = useState(false);
   const [isFoodModalOpen, setIsFoodModalOpen] = useState(false);
   
@@ -26,20 +26,22 @@ export default function ShopPanel() {
   const [pendingOrders, setPendingOrders] = useState<any[]>([]);
   const [foodItems, setFoodItems] = useState<any[]>([]);
   
-  // Stats States
   const [ordersToday, setOrdersToday] = useState(0);
   const [revenueToday, setRevenueToday] = useState(0);
+  const [topSellingItem, setTopSellingItem] = useState('N/A');
 
   const token = localStorage.getItem('token'); 
 
   const fetchFoodItems = async () => {
     try {
-      const res = await fetch('http://localhost:8080/api/v1/food-items/restaurant/1', {
+      const res = await fetch('http://localhost:8080/api/v1/food-items/my-restaurant', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) {
         const data = await res.json();
         setFoodItems(data);
+      } else {
+        console.error("Failed to fetch food items");
       }
     } catch (e) {
       console.error("Error fetching food items", e);
@@ -143,8 +145,6 @@ export default function ShopPanel() {
       console.error("Error delivering order:", error);
     }
   };
-
-  const [topSellingItem, setTopSellingItem] = useState('N/A');
 
   return (
     <div className="min-h-screen bg-gray-50 flex">

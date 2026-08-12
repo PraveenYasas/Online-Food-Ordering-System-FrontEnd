@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Routes, Route, useNavigate, Navigate } from 'react-router-dom'; // Navigate අලුතින් ගත්තා
+import { Routes, Route, useNavigate, Navigate } from 'react-router-dom';
 
 import Navbar from './components/layout/Navbar';
 import Home from './components/home/Home';
@@ -20,14 +20,17 @@ function App() {
   const [activeModal, setActiveModal] = useState<'none' | 'login' | 'signup' | 'orders' | 'favorites' | 'cart' | 'location'>('none');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [deliveryAddress, setDeliveryAddress] = useState("Bandaragama, Western Province, Sri Lanka");
+  
+  const [searchQuery, setSearchQuery] = useState('');
 
   const navigate = useNavigate();
 
-  // 1. In localStorage, check the user's role to determine if they are an Admin, Restaurant Owner, or a regular Customer
-  const role = localStorage.getItem('role');
-
-  // 2. Determine if the customer layout should be shown based on their role
-  const showCustomerLayout = role !== 'ADMIN' && role !== 'RESTURANT_OWNER';
+  const role = localStorage.getItem('role') || '';
+  const isAdmin = role === 'ADMIN' || role === 'ROLE_ADMIN';
+  const isShopOwner = role === 'RESTURANT_OWNER' || role === 'ROLE_RESTURANT_OWNER';
+  
+  const currentUserId = Number(localStorage.getItem('userId')) || 0;
+  const showCustomerLayout = !isAdmin && !isShopOwner;
 
   const openLogin = () => setActiveModal('login');
   const openSignUp = () => setActiveModal('signup');
@@ -35,21 +38,13 @@ function App() {
   const openCart = () => setActiveModal('cart');
   const openLocation = () => setActiveModal('location');
 
-  const openOrders = () => {
-    setIsSidebarOpen(false); 
-    setActiveModal('orders');
-  };
-
-  const openFavorites = () => {
-    setIsSidebarOpen(false); 
-    setActiveModal('favorites');
-  };
+  const openOrders = () => { setIsSidebarOpen(false); setActiveModal('orders'); };
+  const openFavorites = () => { setIsSidebarOpen(false); setActiveModal('favorites'); };
 
   return (
     <CartProvider>
       <div className="min-h-screen bg-white font-sans">
         
-        {/* Only show Navbar for Customers, not for Admin or Shop Owner */}
         {showCustomerLayout && (
           <Navbar 
             onOpenLogin={openLogin} 
@@ -57,86 +52,34 @@ function App() {
             onOpenSidebar={() => setIsSidebarOpen(true)}
             onOpenCart={openCart}
             onOpenLocation={openLocation}
+            onSearch={setSearchQuery} 
+            currentAddress={deliveryAddress}
           />
         )}
         
         <Routes>
-          {/* Re direct to the appropriate page based on the user's role */}
           <Route path="/" element={
-            role === 'ADMIN' ? <Navigate to="/admin" replace /> :
-            role === 'RESTURANT_OWNER' ? <Navigate to="/shop-admin" replace /> :
-            <Home />
+            isAdmin ? <Navigate to="/admin" replace /> :
+            isShopOwner ? <Navigate to="/shop-admin" replace /> :
+            <Home searchQuery={searchQuery} /> 
           } />
 
-          {/* protect the Profile Page based on the user's role */}
-          <Route path="/profile" element={
-            role === 'ADMIN' ? <Navigate to="/admin" replace /> :
-            role === 'RESTURANT_OWNER' ? <Navigate to="/shop-admin" replace /> :
-            <Profile />
-          } />
-
-          {/* Admin Panel can be accessed by Admins only */}
-          <Route path="/admin" element={
-            role === 'ADMIN' ? <AdminPanel /> : <Navigate to="/" replace />
-          } />
-
-          {/* Shop Panel can be accessed by Restaurant Owners only */}
-          <Route path="/shop-admin" element={
-            role === 'RESTURANT_OWNER' ? <ShopPanel /> : <Navigate to="/" replace />
-          } />
+          <Route path="/profile" element={isAdmin ? <Navigate to="/admin" replace /> : isShopOwner ? <Navigate to="/shop-admin" replace /> : <Profile />} />
+          <Route path="/admin" element={isAdmin ? <AdminPanel /> : <Navigate to="/" replace />} />
+          <Route path="/shop-admin" element={isShopOwner ? <ShopPanel /> : <Navigate to="/" replace />} />
         </Routes>
         
-        {/* only show Footer for Customers, not for Admin or Shop Owner */}
         {showCustomerLayout && <Footer />}
 
-        {/* can't see the Cart Drawer for Admin or Shop Owner */}
-        <CartDrawer 
-          isOpen={activeModal === 'cart'} 
-          onClose={closeModal} 
-          currentAddress={deliveryAddress}
-          onAddressChange={setDeliveryAddress}
-        />
-
-        <Sidebar 
-          isOpen={isSidebarOpen} 
-          onClose={() => setIsSidebarOpen(false)}
-          onOpenOrders={openOrders}
-          onOpenFavorites={openFavorites}
-          onOpenAdminPanel={() => {
-            setIsSidebarOpen(false);
-            navigate('/admin');      
-          }} 
-        />
-
-        <OrdersModal 
-          isOpen={activeModal === 'orders'} 
-          onClose={closeModal} 
-        />
-
-        <FavoritesModal 
-          isOpen={activeModal === 'favorites'} 
-          onClose={closeModal}
-          userId={4}
-        />
-
-        <LoginModal 
-          isOpen={activeModal === 'login'} 
-          onClose={closeModal} 
-          onSwitchToSignUp={openSignUp} 
-        />
-
-        <SignUpModal 
-          isOpen={activeModal === 'signup'} 
-          onClose={closeModal} 
-          onSwitchToLogin={openLogin} 
-        />
-
+        <CartDrawer isOpen={activeModal === 'cart'} onClose={closeModal} currentAddress={deliveryAddress} onAddressChange={setDeliveryAddress} />
+        <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} onOpenOrders={openOrders} onOpenFavorites={openFavorites} onOpenAdminPanel={() => { setIsSidebarOpen(false); navigate('/admin'); }} />
+        <OrdersModal isOpen={activeModal === 'orders'} onClose={closeModal} />
+        <FavoritesModal isOpen={activeModal === 'favorites'} onClose={closeModal} userId={currentUserId} />
+        <LoginModal isOpen={activeModal === 'login'} onClose={closeModal} onSwitchToSignUp={openSignUp} />
+        <SignUpModal isOpen={activeModal === 'signup'} onClose={closeModal} onSwitchToLogin={openLogin} />
+        
         {/* @ts-ignore */}
-        <LocationModal 
-          isOpen={activeModal === 'location'} 
-          onClose={closeModal} 
-          onSelectAddress={(address: string) => setDeliveryAddress(address)}
-        />
+        <LocationModal isOpen={activeModal === 'location'} onClose={closeModal} onSelectAddress={(address: string) => setDeliveryAddress(address)} />
         
       </div>
     </CartProvider>
