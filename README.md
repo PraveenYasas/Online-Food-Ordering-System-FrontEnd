@@ -43,3 +43,30 @@ Make sure you have [Node.js](https://nodejs.org/) installed (v16 or higher recom
    git clone [https://github.com/PraveenYasas/Online-Food-Ordering-System-FrontEnd.git](https://github.com/PraveenYasas/Online-Food-Ordering-System-FrontEnd.git)
    cd Online-Food-Ordering-System-FrontEnd
 
+## 📱 How to Use BiteDash (Step-by-Step Guide)
+
+Getting started with BiteDash is as easy as ordering your favorite meal! Here is a quick guide to exploring the platform:
+
+### 1️⃣ Create an Account & Setup Profile
+* Click on **"Sign up"** at the top right corner to create your customer account.
+* Once logged in, navigate to your **Profile** to save your default Delivery Address, Contact Number, and update your personal details for faster checkouts.
+
+### 2️⃣ Browse & Discover Delicious Food
+* Use the **Smart Search Bar** to instantly find specific dishes (e.g., "Kottu", "Burger") or your favorite restaurants.
+* Toggle between **Delivery** and **Pickup** modes at the top navigation bar to see accurate time estimates and pricing.
+* Click the **"❤️" (Heart)** icon on food items or shops to save them to your **Favorites** for later!
+
+### 3️⃣ Add to Cart & Checkout
+* Found what you crave? Click the green **"Add"** button to drop items into your cart.
+* *Note: To ensure a smooth delivery process, you can only add items from one restaurant at a time!*
+* Open the **Cart Drawer** to adjust item quantities, review the total (with dynamically calculated taxes and service fees), and click **"Proceed to Checkout"**.
+* Select your preferred payment method (Cash on Delivery or Card) and place your order!
+
+### 4️⃣ Track & Manage Your Orders
+* Open the sidebar menu (hamburger icon on the top left) and go to **"My Orders"**.
+* Here, you can view your active orders, check their real-time status (Pending, Delivered, Cancelled), or even **Cancel** an order if it's still pending.
+* Loved the meal? Use the **"Reorder"** button on past deliveries to get it again instantly!
+
+---
+**🔐 Special Note for Role-Based Access:** 
+If you log in using a **Restaurant Owner** or **Admin** account, the system will automatically bypass the customer homepage and redirect you to your dedicated, secure management dashboards (`/shop-admin` or `/admin`).
