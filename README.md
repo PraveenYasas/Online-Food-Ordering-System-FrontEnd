@@ -70,3 +70,28 @@ Getting started with BiteDash is as easy as ordering your favorite meal! Here is
 ---
 **🔐 Special Note for Role-Based Access:** 
 If you log in using a **Restaurant Owner** or **Admin** account, the system will automatically bypass the customer homepage and redirect you to your dedicated, secure management dashboards (`/shop-admin` or `/admin`).
+
+## 📸 Screenshots
+
+*(💡 Tip: Add some real screenshots of your application here later! Replace the placeholder links with actual image URLs from your repository.)*
+
+| Home Page | Restaurant Menu | Cart & Checkout |
+| :---: | :---: | :---: |
+| ![Home](https://via.placeholder.com/300x200?text=Home+Page+UI) | ![Menu](https://via.placeholder.com/300x200?text=Restaurant+Menu) | ![Checkout](https://via.placeholder.com/300x200?text=Cart+Drawer) |
+
+## 🚀 Future Enhancements (Roadmap)
+
+We are constantly looking to improve BiteDash! Here are some features planned for future releases:
+* **💳 Real Payment Gateway Integration:** Connecting Stripe or Stripe/PayHere for actual live card payments.
+* **📍 Live Rider Tracking:** Real-time map integration (Google Maps API) to track delivery drivers.
+* **⭐ Reviews & Ratings System:** Allow customers to leave reviews and rate food items/restaurants.
+* **🌙 Dark Mode:** A sleek dark theme for better night-time browsing.
+
+## 🤝 Contributing
+
+Contributions, issues, and feature requests are welcome! 
+Feel free to check the [issues page](https://github.com/PraveenYasas/Online-Food-Ordering-System-FrontEnd/issues) if you want to contribute.
+
+## 📝 License
+
+This project is [MIT](https://choosealicense.com/licenses/mit/) licensed.
