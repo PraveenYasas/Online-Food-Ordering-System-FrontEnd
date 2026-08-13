@@ -1,73 +1,45 @@
-# React + TypeScript + Vite
+# 🍔 BiteDash - Online Food Ordering System (Frontend)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Welcome to the frontend repository of **BiteDash**, a modern, responsive, and highly interactive Online Food Ordering System. Built with the latest web technologies, this application provides a seamless food delivery and pickup experience for customers, alongside dedicated management panels for Restaurant Owners and Administrators.
 
-Currently, two official plugins are available:
+## ✨ Key Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+### 👨‍💼 Customer Experience
+* **Smart Cart System:** Real-time cart management with quantity adjustments, single-restaurant cart validation (prevents mixing items from different shops), and dynamic fee calculations (tax, service fee, discounts).
+* **Delivery & Pickup Modes:** Toggle between delivery and store pickup, automatically adjusting fees and estimated times.
+* **Real-time Search & Filtering:** Instantly search for favorite foods or restaurants with a live filtering system.
+* **User Authentication:** Secure login and registration with JWT-based session management.
+* **Order Tracking & History:** View past orders, check order status (Pending, Delivered, Cancelled), and easily reorder favorite meals.
+* **Favorites:** Save favorite restaurants and dishes for quick access.
+* **Profile Management:** Manage personal details, delivery addresses, and payment methods.
 
-## React Compiler
+### 🏬 Restaurant Owner Panel
+* **Menu Management:** Add, edit, and categorize food items with images and descriptions.
+* **Order Management:** View incoming orders, update order statuses, and track daily revenue.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### 🛡️ Admin Panel
+* **Platform Overview:** Monitor total users, active restaurants, and overall system health.
+* **Store & User Management:** Approve new restaurants, suspend shops, and manage user roles.
 
-## Expanding the ESLint configuration
+## 🛠️ Tech Stack
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+* **Core:** [React](https://reactjs.org/) + [TypeScript](https://www.typescriptlang.org/)
+* **Build Tool:** [Vite](https://vitejs.dev/) for lightning-fast HMR and optimized builds.
+* **Styling:** [Tailwind CSS](https://tailwindcss.com/) for a utility-first, modern UI design.
+* **Routing:** [React Router DOM](https://reactrouter.com/) for seamless single-page application navigation.
+* **State Management:** React Context API (e.g., `CartContext` for global cart state).
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## 🚀 Getting Started
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+Follow these instructions to set up and run the project on your local machine.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+### Prerequisites
+Make sure you have [Node.js](https://nodejs.org/) installed (v16 or higher recommended).
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### Installation
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+1. **Clone the repository:**
+   ```bash
+   git clone [https://github.com/PraveenYasas/Online-Food-Ordering-System-FrontEnd.git](https://github.com/PraveenYasas/Online-Food-Ordering-System-FrontEnd.git)
+   cd Online-Food-Ordering-System-FrontEnd
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
